@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "tsc-watch -p tsconfig.json --onSuccess \"npm run start-node\"",
     "lint": "eslint",
     "test:watch": "jest --watch",
+    "start": "node dist/server.js",
     "start-node": "node dist/server.js ",
     "start-pm2": "pm2 start dist/server.js ",
     "build": "tsc -p .",
