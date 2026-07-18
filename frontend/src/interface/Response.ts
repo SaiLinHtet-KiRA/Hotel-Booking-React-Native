@@ -1,4 +1,4 @@
 export default interface Response<T> {
-  meassage: string;
+  message: string;
   data?: T;
 }

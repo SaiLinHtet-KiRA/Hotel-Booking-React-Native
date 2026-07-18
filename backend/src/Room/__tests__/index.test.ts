@@ -84,8 +84,8 @@ describe("Room Booking Service", () => {
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
-      it("WITH SORT", async () => {
-        const rooms = await RoomRepo.get({ sort: "startTime" });
+      it("WITHOUT FILTERS", async () => {
+        const rooms = await RoomRepo.get({});
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
@@ -195,8 +195,8 @@ describe("Room Booking Service", () => {
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
-      it("WITH SORT", async () => {
-        const rooms = await RoomService.getRooms({ sort: "startTime" });
+      it("WITHOUT FILTERS", async () => {
+        const rooms = await RoomService.getRooms({});
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
@@ -327,18 +327,6 @@ describe("Room Booking Service", () => {
       it("Status 200 with time filter", async () => {
         await request(express.app)
           .get("/room?time=" + startTime.getTime())
-          .set("Accept", "application/json")
-          .expect("Content-Type", /json/)
-          .expect(200)
-          .then((response) => {
-            expect(response.body.message).toBeTruthy();
-            expect(Array.isArray(response.body.data)).toBe(true);
-          });
-      });
-
-      it("Status 200 with sort", async () => {
-        await request(express.app)
-          .get("/room?sort=startTime")
           .set("Accept", "application/json")
           .expect("Content-Type", /json/)
           .expect(200)

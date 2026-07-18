@@ -2,25 +2,31 @@ import { Request, Response } from "express";
 import { User, UserDocument } from "../User.model";
 import { PaginationQuery } from "./User.query.type";
 
+export type GetUserRequest = Request<{ id: string }, null, null, null>;
+export type GetUsersRequest = Request<null, null, null, PaginationQuery>;
+export type UpdateUserRequest = Request<{ id: string }, null, User, null>;
+export type CreateUserRequest = Request<null, null, User, null>;
+export type DeleteUserRequest = Request<{ id: string }, null, null, null>;
+
 export default interface UserControllerType {
   getUser(
-    req: Request<{ id: string }, null, null, null>,
+    req: GetUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void>;
   getUsers(
-    req: Request<null, null, null, PaginationQuery>,
+    req: GetUsersRequest,
     res: Response<{ message: string; data: UserDocument[] }>,
   ): Promise<void>;
   updateUser(
-    req: Request<{ id: string }, null, User, null>,
+    req: UpdateUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void>;
   createUser(
-    req: Request<null, null, User, null>,
+    req: CreateUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void>;
   deleteUser(
-    req: Request<{ id: string }, null, null, null>,
+    req: DeleteUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void>;
 }

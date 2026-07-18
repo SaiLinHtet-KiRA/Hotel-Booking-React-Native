@@ -1,3 +1,5 @@
+import { UpdateQuery } from "mongoose";
+import RoomService from "../Room/Room.service";
 import { validateZod } from "../util/validate";
 import { PaginationQuery } from "./interface/User.query.type";
 import UserServiceType from "./interface/User.service.type";
@@ -7,8 +9,7 @@ import UserRepo from "./User.repo";
 class UserService implements UserServiceType {
   async getUsers(query: PaginationQuery): Promise<UserDocument[]> {
     try {
-      const Users = await UserRepo.get(query);
-      return Users;
+      return await UserRepo.get(query);
     } catch (error) {
       throw error;
     }
@@ -31,22 +32,20 @@ class UserService implements UserServiceType {
       throw error;
     }
   }
-  async updateUser(id: string, data: User): Promise<UserDocument> {
+  async updateUser(id: string, data: UpdateQuery<User>): Promise<UserDocument> {
     try {
-      try {
-        const UserData = validateZod(UserSchema, data);
-
-        return await UserRepo.update(id, UserData);
-      } catch (error) {
-        throw error;
-      }
+      return await UserRepo.update(id, data);
     } catch (error) {
       throw error;
     }
   }
   async deleteUser(id: string): Promise<UserDocument> {
     try {
-      return await UserRepo.delete(id);
+      const deletedUser = await UserRepo.delete(id);
+      deletedUser.records.map(
+        async (id) => await RoomService.deleteRoom(id.toString()),
+      );
+      return deletedUser;
     } catch (error) {
       throw error;
     }

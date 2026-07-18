@@ -10,7 +10,13 @@ export default interface AuthControllerType {
     req: Request<null, null, null, null>,
     res: Response<{
       message: string;
-      data?: { name: string; role: string; records: unknown[]; id: number };
+      data?: {
+        _id: string;
+        name: string;
+        role: string;
+        records: unknown[];
+        id: number;
+      };
     }>,
   ): Promise<void>;
   Logout(

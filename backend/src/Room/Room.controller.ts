@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { Room, RoomDocument } from "./Room.model";
-import RoomControllerType from "./interface/Room.controller.type";
+import RoomControllerType, {
+  RoomCreateBody,
+} from "./interface/Room.controller.type";
 import RoomService from "./Room.service";
 import { PaginationQuery } from "./interface/Room.query.type";
 
@@ -37,12 +39,16 @@ class RoomController implements RoomControllerType {
   }
 
   async updateRoom(
-    req: Request<{ id: string }, null, Room, null>,
+    req: Request<{ id: string }, null, RoomCreateBody, null>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
       const { id } = req.params;
-      const Room = await RoomService.updateRoom(id, req.body);
+      const roomData: Room = {
+        ...req.body,
+        userId: req.session.userId!,
+      };
+      const Room = await RoomService.updateRoom(id, roomData);
       res
         .status(200)
         .json({ message: "Room updated successfully", data: Room });
@@ -52,11 +58,15 @@ class RoomController implements RoomControllerType {
   }
 
   async createRoom(
-    req: Request<null, null, Room, null>,
+    req: Request<null, null, RoomCreateBody, null>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
-      const Room = await RoomService.createRoom(req.body);
+      const roomData: Room = {
+        ...req.body,
+        userId: req.session.userId!,
+      };
+      const Room = await RoomService.createRoom(roomData);
       res
         .status(200)
         .json({ message: "Room created successfully", data: Room });

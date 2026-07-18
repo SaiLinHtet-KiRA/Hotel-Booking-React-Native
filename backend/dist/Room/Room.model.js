@@ -61,7 +61,7 @@ const DSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.ObjectId,
         required: [true, "User Id field is missing"],
     },
-}, { versionKey: false });
+}, { versionKey: false, timestamps: true });
 DSchema.pre("save", async function () {
     if (this.isNew) {
         this.id = (await (0, Counter_1.getNextSequence)("RoomId"));

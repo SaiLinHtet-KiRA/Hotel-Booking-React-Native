@@ -1,3 +1,5 @@
+import type Room from "./Room";
+
 export interface UserDTO {
   name: string;
   password: string;
@@ -8,4 +10,5 @@ export default interface User extends UserDTO {
   id: number;
   createdAt: Date;
   UpdatedAt: Date;
+  records: Room[];
 }

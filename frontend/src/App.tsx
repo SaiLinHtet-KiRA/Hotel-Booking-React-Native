@@ -1,13 +1,16 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import { useLayoutEffect } from "react";
+import { useAppSelector } from "./redux/store";
 import { useGetProfileQuery } from "./redux/api/auth";
-import { useEffect } from "react";
 
 export default function App() {
-  const { data } = useGetProfileQuery();
+  useGetProfileQuery();
+  const user = useAppSelector(({ user }) => user);
   const router = useNavigate();
-  useEffect(() => {
-    if (data) router("/dashboard", { replace: true });
-  }, [data]);
+  useLayoutEffect(() => {
+    if (user.name) router("/dashboard", { replace: true });
+    else router("/", { replace: true });
+  }, [user]);
   return (
     <>
       <Outlet />

@@ -1,3 +1,5 @@
+import { UpdateQuery } from "mongoose";
+import RoomModel from "../Room/Room.model";
 import { NotFoundError } from "../util/error/errors";
 import { PaginationQuery } from "./interface/User.query.type";
 import UserRepoType from "./interface/User.repo.type";
@@ -14,15 +16,15 @@ class UserRepo implements UserRepoType {
       const Users = await UserModel.find(
         name
           ? { name }
-          : role
+          : role == "admin" || role == "owner" || role == "user"
             ? {
                 role,
               }
             : {},
         {},
         page && limit ? { skip: page * limit, limit } : {},
-      );
-      if (Users) return Users;
+      ).populate({ path: "records", model: RoomModel });
+      if (Users) return Users as unknown as UserDocument[];
       throw new Error(`Something was wrong in UserRepo.get`);
     } catch (error) {
       throw error;
@@ -30,8 +32,11 @@ class UserRepo implements UserRepoType {
   }
   async getByID(id: string): Promise<UserDocument> {
     try {
-      const User = await UserModel.findById(id);
-      if (User) return User;
+      const User = await UserModel.findById(id).populate({
+        path: "records",
+        model: RoomModel,
+      });
+      if (User) return User as unknown as UserDocument;
       throw new NotFoundError(`${id} was not found in User Database!!!`);
     } catch (error) {
       throw error;
@@ -45,7 +50,7 @@ class UserRepo implements UserRepoType {
       throw error;
     }
   }
-  async update(id: string, data: User): Promise<UserDocument> {
+  async update(id: string, data: UpdateQuery<User>): Promise<UserDocument> {
     try {
       const User = await UserModel.findByIdAndUpdate(id, data, {
         returnDocument: "after",

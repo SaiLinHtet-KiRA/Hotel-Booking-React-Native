@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "./api/apiSlice";
-
-// import userReducer from "./features/user";
+import userReducer from "./features/user";
 // import socketReducer from "./features/socket/socket";
 // import topupReducer from "./features/topup";
 // import rechargeReducer from "./features/recharge";
@@ -14,7 +13,7 @@ import { type TypedUseSelectorHook, useSelector } from "react-redux";
 const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
-    // user: userReducer,
+    user: userReducer,
     // histroy: HistroyAdapter,
   },
   preloadedState: {},

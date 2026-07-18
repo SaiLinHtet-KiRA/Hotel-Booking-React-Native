@@ -20,8 +20,8 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-export type UserDocument = HydratedDocument<
-  User & { id: number; records: Schema.Types.ObjectId[] }
+export type UserDocument<T = Schema.Types.ObjectId[]> = HydratedDocument<
+  User & { id: number; records: T }
 >;
 
 const DSchema = new Schema<UserDocument>(

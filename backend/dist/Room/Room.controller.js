@@ -32,7 +32,11 @@ class RoomController {
     async updateRoom(req, res) {
         try {
             const { id } = req.params;
-            const Room = await Room_service_1.default.updateRoom(id, req.body);
+            const roomData = {
+                ...req.body,
+                userId: req.session.userId,
+            };
+            const Room = await Room_service_1.default.updateRoom(id, roomData);
             res
                 .status(200)
                 .json({ message: "Room updated successfully", data: Room });
@@ -43,7 +47,11 @@ class RoomController {
     }
     async createRoom(req, res) {
         try {
-            const Room = await Room_service_1.default.createRoom(req.body);
+            const roomData = {
+                ...req.body,
+                userId: req.session.userId,
+            };
+            const Room = await Room_service_1.default.createRoom(roomData);
             res
                 .status(200)
                 .json({ message: "Room created successfully", data: Room });

@@ -37,7 +37,7 @@ const DSchema = new Schema<RoomDocument>(
       required: [true, "User Id field is missing"],
     },
   },
-  { versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 DSchema.pre("save", async function () {

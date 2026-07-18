@@ -3,14 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Room_service_1 = __importDefault(require("../Room/Room.service"));
 const validate_1 = require("../util/validate");
 const User_model_1 = require("./User.model");
 const User_repo_1 = __importDefault(require("./User.repo"));
 class UserService {
     async getUsers(query) {
         try {
-            const Users = await User_repo_1.default.get(query);
-            return Users;
+            return await User_repo_1.default.get(query);
         }
         catch (error) {
             throw error;
@@ -36,13 +36,7 @@ class UserService {
     }
     async updateUser(id, data) {
         try {
-            try {
-                const UserData = (0, validate_1.validateZod)(User_model_1.UserSchema, data);
-                return await User_repo_1.default.update(id, UserData);
-            }
-            catch (error) {
-                throw error;
-            }
+            return await User_repo_1.default.update(id, data);
         }
         catch (error) {
             throw error;
@@ -50,7 +44,9 @@ class UserService {
     }
     async deleteUser(id) {
         try {
-            return await User_repo_1.default.delete(id);
+            const deletedUser = await User_repo_1.default.delete(id);
+            deletedUser.records.map(async (id) => await Room_service_1.default.deleteRoom(id.toString()));
+            return deletedUser;
         }
         catch (error) {
             throw error;

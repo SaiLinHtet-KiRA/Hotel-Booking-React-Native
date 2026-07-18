@@ -24,10 +24,10 @@ class AuthController {
                 });
                 return;
             }
-            const { name, role, records, id } = await User_service_1.default.getUser(req.session.userId);
+            const { name, role, records, id, _id } = await User_service_1.default.getUser(req.session.userId);
             res.json({
                 message: "Logged In",
-                data: { name, role, records, id },
+                data: { _id: String(_id), name, role, records, id },
             });
         }
         catch (error) {

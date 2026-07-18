@@ -24,7 +24,7 @@ class AuthController implements AuthControllerType {
     req: Request<null, null, null, null>,
     res: Response<{
       message: string;
-      data?: { name: string; role: string; records: unknown[]; id: number };
+      data?: { _id: string; name: string; role: string; records: unknown[]; id: number };
     }>,
   ): Promise<void> {
     try {
@@ -34,13 +34,13 @@ class AuthController implements AuthControllerType {
         });
         return;
       }
-      const { name, role, records, id } = await UserService.getUser(
+      const { name, role, records, id, _id } = await UserService.getUser(
         req.session.userId,
       );
 
       res.json({
         message: "Logged In",
-        data: { name, role, records, id },
+        data: { _id: String(_id), name, role, records, id },
       });
     } catch (error) {
       throw error;

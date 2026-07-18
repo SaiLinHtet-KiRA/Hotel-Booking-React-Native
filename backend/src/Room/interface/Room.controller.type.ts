@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { PaginationQuery } from "./Room.query.type";
 import { Room, RoomDocument } from "../Room.model";
 
+export type RoomCreateBody = Omit<Room, "userId">;
+
 export default interface RoomControllerType {
   getRoom(
     req: Request<{ id: string }, null, null, null>,
@@ -12,11 +14,11 @@ export default interface RoomControllerType {
     res: Response<{ message: string; data: RoomDocument[] }>,
   ): Promise<void>;
   updateRoom(
-    req: Request<{ id: string }, null, Room, null>,
+    req: Request<{ id: string }, null, RoomCreateBody, null>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void>;
   createRoom(
-    req: Request<null, null, Room, null>,
+    req: Request<null, null, RoomCreateBody, null>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void>;
   deleteRoom(

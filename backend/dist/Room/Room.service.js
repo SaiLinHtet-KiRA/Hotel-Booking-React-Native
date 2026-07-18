@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Room_model_1 = require("./Room.model");
 const Room_repo_1 = __importDefault(require("./Room.repo"));
 const validate_1 = require("../util/validate");
+const User_service_1 = __importDefault(require("../User/User.service"));
+const DateToNumber_1 = require("../helper/DateToNumber");
 class RoomService {
     async getRooms(query) {
         try {
@@ -27,7 +29,21 @@ class RoomService {
     async createRoom(data) {
         try {
             const RoomData = (0, validate_1.validateZod)(Room_model_1.RoomSchema, data);
+            if ((0, DateToNumber_1.DateToNumber)(data.endTime) - (0, DateToNumber_1.DateToNumber)(data.startTime) >
+                2 * 60 * 60 * 1000)
+                throw Error("Meetig time can only take two hours");
+            if ((0, DateToNumber_1.DateToNumber)(data.startTime) >= (0, DateToNumber_1.DateToNumber)(data.endTime))
+                throw Error("End time must be after start time");
+            const existingSection = await this.getRooms({
+                time: (0, DateToNumber_1.DateToNumber)(data.startTime),
+            });
+            console.log("existingSection", existingSection);
+            if (existingSection.length)
+                throw Error("This time section is alredy taken");
             const newRoom = await Room_repo_1.default.create(RoomData);
+            await User_service_1.default.updateUser(newRoom.userId, {
+                $push: { records: newRoom._id },
+            });
             return newRoom;
         }
         catch (error) {
@@ -50,7 +66,11 @@ class RoomService {
     }
     async deleteRoom(id) {
         try {
-            return await Room_repo_1.default.delete(id);
+            const deletedRoom = await Room_repo_1.default.delete(id);
+            await User_service_1.default.updateUser(deletedRoom.userId.toString(), {
+                $pull: { records: deletedRoom._id },
+            });
+            return deletedRoom;
         }
         catch (error) {
             throw error;

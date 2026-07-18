@@ -2,6 +2,7 @@ import { useForm, Controller } from "react-hook-form";
 import InputField from "../InputField/InputField";
 import { useLoginMutation } from "../../redux/api/auth";
 import type LoginDTO from "../../interface/Login";
+import type Response from "../../interface/Response";
 
 export default function LoginForm() {
   const [login, { error }] = useLoginMutation();
@@ -29,7 +30,8 @@ export default function LoginForm() {
 
       {error && "data" in error && (
         <p className="text-red-600 text-center text-sm">
-          {(error.data as any)?.message ?? "Invalid name or password"}
+          {(error.data as Response<undefined>)?.message ??
+            "Invalid name or password"}
         </p>
       )}
 

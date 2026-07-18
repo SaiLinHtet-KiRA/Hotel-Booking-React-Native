@@ -1,12 +1,17 @@
-import { Request, Response } from "express";
-import UserControllerType from "./interface/User.controller.type";
-import { User, UserDocument } from "./User.model";
+import { Response } from "express";
+import UserControllerType, {
+  GetUserRequest,
+  GetUsersRequest,
+  UpdateUserRequest,
+  CreateUserRequest,
+  DeleteUserRequest,
+} from "./interface/User.controller.type";
+import { UserDocument } from "./User.model";
 import UserService from "./User.service";
-import { PaginationQuery } from "./interface/User.query.type";
 
 class UserController implements UserControllerType {
   async getUser(
-    req: Request<{ id: string }, null, null, null>,
+    req: GetUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void> {
     try {
@@ -22,7 +27,7 @@ class UserController implements UserControllerType {
   }
 
   async getUsers(
-    req: Request<null, null, null, PaginationQuery>,
+    req: GetUsersRequest,
     res: Response<{ message: string; data: UserDocument[] }>,
   ): Promise<void> {
     try {
@@ -38,7 +43,7 @@ class UserController implements UserControllerType {
   }
 
   async updateUser(
-    req: Request<{ id: string }, null, User, null>,
+    req: UpdateUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void> {
     try {
@@ -53,7 +58,7 @@ class UserController implements UserControllerType {
   }
 
   async createUser(
-    req: Request<null, null, User, null>,
+    req: CreateUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void> {
     try {
@@ -67,7 +72,7 @@ class UserController implements UserControllerType {
   }
 
   async deleteUser(
-    req: Request<{ id: string }, null, null, null>,
+    req: DeleteUserRequest,
     res: Response<{ message: string; data: UserDocument }>,
   ): Promise<void> {
     try {
