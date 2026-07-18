@@ -8,7 +8,7 @@ export default function App() {
   const user = useAppSelector(({ user }) => user);
   const router = useNavigate();
   useLayoutEffect(() => {
-    if (user.name) router("/dashboard", { replace: true });
+    if (user.name) router("/dashboard/bookings", { replace: true });
     else router("/", { replace: true });
   }, [user]);
   return (

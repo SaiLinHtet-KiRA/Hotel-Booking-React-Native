@@ -18,9 +18,6 @@ export default function Sidebar() {
         {role} Panel
       </h2>
       <nav className="flex flex-col gap-1">
-        <NavLink to="/dashboard" end className={linkClass}>
-          Dashboard
-        </NavLink>
         <NavLink to="/dashboard/bookings" className={linkClass}>
           Bookings
         </NavLink>

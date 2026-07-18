@@ -1,12 +1,8 @@
 import { NavLink } from "react-router-dom";
-
-const TABS = [
-  { to: "/dashboard/bookings/all", label: "All" },
-  { to: "/dashboard/bookings/my", label: "My Booking" },
-  { to: "/dashboard/bookings/users", label: "Users" },
-];
+import { useAppSelector } from "../../redux/store";
 
 export default function BookingTabs() {
+  const { role } = useAppSelector(({ user }) => user);
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
       isActive
@@ -17,11 +13,17 @@ export default function BookingTabs() {
   return (
     <div className="flex items-center bg-white rounded-lg border border-slate-200 p-2">
       <nav className="flex gap-1">
-        {TABS.map(({ to, label }) => (
-          <NavLink key={to} to={to} className={linkClass}>
-            {label}
+        <NavLink to={"/dashboard/bookings/all"} className={linkClass}>
+          All
+        </NavLink>
+        <NavLink to={"/dashboard/bookings/my"} className={linkClass}>
+          My Booking
+        </NavLink>
+        {role == "owner" && (
+          <NavLink to={"/dashboard/bookings/users"} className={linkClass}>
+            Users
           </NavLink>
-        ))}
+        )}
       </nav>
     </div>
   );
