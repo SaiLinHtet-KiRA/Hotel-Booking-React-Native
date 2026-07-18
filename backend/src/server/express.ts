@@ -13,7 +13,7 @@ export default class ExpressServer {
     this.app.set("trust proxy", 1);
     this.app.use(
       cors({
-        origin: ["https://meeting-room-booking-pf82.vercel.app"],
+        origin: [process.env.FRONTEND_URL!],
         credentials: true,
       }),
     );
