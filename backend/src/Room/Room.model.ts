@@ -1,50 +1,47 @@
-import mongoose, { Schema, HydratedDocument, Types } from "mongoose";
+import mongoose, { Schema, HydratedDocument } from "mongoose";
 import { z } from "zod";
-import { getNextSequence } from "../helper/Counter";
 
 export const RoomSchema = z.object({
-  startTime: z.coerce.date({ error: "startTime field is missing!!!" }),
-  endTime: z.coerce.date({ error: "startTime field is missing!!!" }),
-  userId: z.any().refine((value) => Types.ObjectId.isValid(value), {
-    message: "Invalid ObjectId",
+  number: z
+    .number({ error: "Number field is missing" })
+    .min(1, { error: "Number must start from 1" }),
+  type: z.enum(["single bed", "double bed", "family", "deluxe", "suite"], {
+    error: "Type field is missing",
+  }),
+  capacity: z
+    .number({ error: "Capacity field is missing" })
+    .min(1, { error: "Must start from 1" })
+    .max(5, "Only 5 people can live"),
+  price: z
+    .number({ error: "Price field is missing" })
+    .min(1, { error: "Price can't be last than 0" }),
+  status: z.enum(["available", "busy", "maintenance"], {
+    error: "Type field is missing",
   }),
 });
 
 export type Room = z.infer<typeof RoomSchema>;
 
-export type RoomDocument = HydratedDocument<
-  Room & {
-    id: number;
-  }
->;
+export type RoomDocument = HydratedDocument<Room>;
 
 const DSchema = new Schema<RoomDocument>(
   {
-    id: {
-      type: Number,
-      default: 0,
+    number: { type: Number, min: 1, required: true },
+    type: {
+      type: String,
+      enum: ["single bed", "double bed", "family", "deluxe", "suite"],
+      required: true,
     },
-    startTime: {
-      type: Date,
-      required: [true, "Start Time field is missing"],
-    },
-    endTime: {
-      type: Date,
-      required: [true, "End Time field is missing"],
-    },
-    userId: {
-      type: Schema.ObjectId,
-      required: [true, "User Id field is missing"],
+    capacity: { type: Number, min: 1, max: 4, required: true },
+    price: { type: Number, min: 1, required: true },
+    status: {
+      type: String,
+      enum: ["available", "busy", "maintenance"],
+      default: "available",
     },
   },
   { versionKey: false, timestamps: true },
 );
-
-DSchema.pre("save", async function () {
-  if (this.isNew) {
-    this.id = (await getNextSequence("RoomId"))!;
-  }
-});
 
 const RoomModel = mongoose.connection.useDb("Room").model("Room", DSchema);
 
