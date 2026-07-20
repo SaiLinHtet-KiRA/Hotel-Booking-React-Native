@@ -1,10 +1,10 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { HapticTab } from "@/components/haptic-tab";
+import { HomeIcon, BookingIcon, UserIcon } from "@/components/svg";
+import HeaderBar from "@/components/header-bar";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -12,22 +12,36 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
+        headerShown: true,
+        headerTitle: () => <HeaderBar />,
+        headerStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+        },
+        headerTitleAlign: "center",
         tabBarButton: HapticTab,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Home",
+          tabBarIcon: ({ color }) => <HomeIcon size={28} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="booking"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Booking",
+          tabBarIcon: ({ color }) => <BookingIcon size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="more"
+        options={{
+          title: "More",
+          tabBarIcon: ({ color }) => <UserIcon size={28} color={color} />,
         }}
       />
     </Tabs>
