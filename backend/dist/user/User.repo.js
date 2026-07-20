@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Room_model_1 = __importDefault(require("../Room/Room.model"));
 const errors_1 = require("../util/error/errors");
 const User_model_1 = __importDefault(require("./User.model"));
 class UserRepo {
@@ -15,7 +14,7 @@ class UserRepo {
                     ? {
                         role,
                     }
-                    : {}, {}, page && limit ? { skip: page * limit, limit } : {}).populate({ path: "records", model: Room_model_1.default });
+                    : {}, {}, page && limit ? { skip: page * limit, limit } : {});
             if (Users)
                 return Users;
             throw new Error(`Something was wrong in UserRepo.get`);
@@ -26,10 +25,7 @@ class UserRepo {
     }
     async getByID(id) {
         try {
-            const User = await User_model_1.default.findById(id).populate({
-                path: "records",
-                model: Room_model_1.default,
-            });
+            const User = await User_model_1.default.findById(id);
             if (User)
                 return User;
             throw new errors_1.NotFoundError(`${id} was not found in User Database!!!`);

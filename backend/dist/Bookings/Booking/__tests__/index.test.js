@@ -96,6 +96,16 @@ describe("Booking Service", () => {
             it("WITH ERROR", async () => {
                 await expect(Booking_service_1.default.createBooking({})).rejects.toThrow();
             });
+            it("WITH ERROR - endDate before startDate", async () => {
+                const invalidData = {
+                    user: new mongoose_1.default.Types.ObjectId(),
+                    room: new mongoose_1.default.Types.ObjectId(),
+                    bookings: new mongoose_1.default.Types.ObjectId(),
+                    startDate: new Date(Date.now() + 86400000),
+                    endDate: new Date(),
+                };
+                await expect(Booking_service_1.default.createBooking(invalidData)).rejects.toThrow();
+            });
         });
         describe("Get Booking", () => {
             it("WITH SUCCESS", async () => {

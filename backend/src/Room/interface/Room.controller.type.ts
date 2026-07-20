@@ -14,11 +14,11 @@ export default interface RoomControllerType {
     res: Response<{ message: string; data: RoomDocument[] }>,
   ): Promise<void>;
   updateRoom(
-    req: Request<{ id: string }, null, RoomCreateBody, null>,
+    req: Request<{ id: string }, {}, RoomCreateBody, {}>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void>;
   createRoom(
-    req: Request<null, null, RoomCreateBody, null>,
+    req: Request<{}, {}, RoomCreateBody, {}>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void>;
   deleteRoom(

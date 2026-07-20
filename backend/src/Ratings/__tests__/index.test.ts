@@ -127,6 +127,12 @@ describe("Ratings Service", () => {
         );
         expect(average).toBe(0);
       });
+
+      it("WITH ERROR - non-existent ID", async () => {
+        await expect(
+          RatingsService.calculateAverageRating("507f1f77bcf86cd799439011"),
+        ).rejects.toThrow();
+      });
     });
 
     describe("Update Ratings", () => {

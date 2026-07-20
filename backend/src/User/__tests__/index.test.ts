@@ -40,6 +40,12 @@ describe("User Service", () => {
       it("WITH ERROR", async () => {
         await expect(UserRepo.create({} as User)).rejects.toThrow();
       });
+
+      it("WITH ERROR - duplicate email", async () => {
+        await expect(
+          UserRepo.create(mockUserData),
+        ).rejects.toThrow();
+      });
     });
 
     describe("Get User", () => {
@@ -142,6 +148,12 @@ describe("User Service", () => {
 
       it("WITH ERROR", async () => {
         await expect(UserService.createUser({} as User)).rejects.toThrow();
+      });
+
+      it("WITH ERROR - duplicate email", async () => {
+        await expect(
+          UserService.createUser(mockUserData),
+        ).rejects.toThrow();
       });
     });
 

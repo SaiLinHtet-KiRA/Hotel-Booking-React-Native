@@ -39,7 +39,7 @@ class RoomController implements RoomControllerType {
   }
 
   async updateRoom(
-    req: Request<{ id: string }, null, RoomCreateBody, null>,
+    req: Request<{ id: string }, {}, RoomCreateBody, {}>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
@@ -55,7 +55,7 @@ class RoomController implements RoomControllerType {
   }
 
   async createRoom(
-    req: Request<null, null, RoomCreateBody, null>,
+    req: Request<{}, {}, RoomCreateBody, {}>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {

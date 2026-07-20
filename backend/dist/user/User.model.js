@@ -75,8 +75,8 @@ const DSchema = new mongoose_1.Schema({
         required: [true, "Role field is missing"],
         default: "user",
     },
-    bookings: { type: mongoose_1.Schema.Types.ObjectId, required: true },
-}, { versionKey: false });
+    bookings: { type: mongoose_1.Schema.Types.ObjectId },
+}, { versionKey: false, timestamps: true });
 DSchema.pre("save", async function () {
     if (this.isNew) {
         this.id = (await (0, Counter_1.getNextSequence)("UserId"));

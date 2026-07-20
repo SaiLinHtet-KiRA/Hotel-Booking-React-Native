@@ -100,6 +100,9 @@ describe("Ratings Service", () => {
                 const average = await Ratings_service_1.default.calculateAverageRating(createdRatings._id.toString());
                 expect(average).toBe(0);
             });
+            it("WITH ERROR - non-existent ID", async () => {
+                await expect(Ratings_service_1.default.calculateAverageRating("507f1f77bcf86cd799439011")).rejects.toThrow();
+            });
         });
         describe("Update Ratings", () => {
             it("WITH SUCCESS", async () => {

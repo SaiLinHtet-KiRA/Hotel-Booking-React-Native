@@ -1,5 +1,4 @@
 import { UpdateQuery } from "mongoose";
-import RoomModel from "../Room/Room.model";
 import { NotFoundError } from "../util/error/errors";
 import { PaginationQuery } from "./interface/User.query.type";
 import UserRepoType from "./interface/User.repo.type";
@@ -23,7 +22,7 @@ class UserRepo implements UserRepoType {
             : {},
         {},
         page && limit ? { skip: page * limit, limit } : {},
-      ).populate({ path: "records", model: RoomModel });
+      );
       if (Users) return Users as unknown as UserDocument[];
       throw new Error(`Something was wrong in UserRepo.get`);
     } catch (error) {
@@ -32,10 +31,7 @@ class UserRepo implements UserRepoType {
   }
   async getByID(id: string): Promise<UserDocument> {
     try {
-      const User = await UserModel.findById(id).populate({
-        path: "records",
-        model: RoomModel,
-      });
+      const User = await UserModel.findById(id);
       if (User) return User as unknown as UserDocument;
       throw new NotFoundError(`${id} was not found in User Database!!!`);
     } catch (error) {

@@ -40,6 +40,9 @@ describe("Room Booking Service", () => {
             it("WITH ERROR", async () => {
                 await expect(Room_repo_1.default.create({})).rejects.toThrow();
             });
+            it("WITH ERROR - duplicate room number", async () => {
+                await expect(Room_repo_1.default.create(mockRoomData)).rejects.toThrow();
+            });
         });
         describe("Get Room", () => {
             it("WITH SUCCESS", async () => {
@@ -70,6 +73,11 @@ describe("Room Booking Service", () => {
             });
             it("WITHOUT FILTERS", async () => {
                 const rooms = await Room_repo_1.default.get({});
+                expect(Array.isArray(rooms)).toBe(true);
+                expect(rooms.length).toBeGreaterThanOrEqual(1);
+            });
+            it("WITH STATUS FILTER", async () => {
+                const rooms = await Room_repo_1.default.get({ status: "available" });
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });
@@ -122,6 +130,9 @@ describe("Room Booking Service", () => {
             it("WITH ERROR", async () => {
                 await expect(Room_service_1.default.createRoom({})).rejects.toThrow();
             });
+            it("WITH ERROR - duplicate room number", async () => {
+                await expect(Room_service_1.default.createRoom(mockRoomData)).rejects.toThrow();
+            });
         });
         describe("Get Room", () => {
             it("WITH SUCCESS", async () => {
@@ -151,6 +162,11 @@ describe("Room Booking Service", () => {
             });
             it("WITHOUT FILTERS", async () => {
                 const rooms = await Room_service_1.default.getRooms({});
+                expect(Array.isArray(rooms)).toBe(true);
+                expect(rooms.length).toBeGreaterThanOrEqual(1);
+            });
+            it("WITH STATUS FILTER", async () => {
+                const rooms = await Room_service_1.default.getRooms({ status: "available" });
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });

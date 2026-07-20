@@ -44,6 +44,12 @@ describe("Room Booking Service", () => {
       it("WITH ERROR", async () => {
         await expect(RoomRepo.create({} as Room)).rejects.toThrow();
       });
+
+      it("WITH ERROR - duplicate room number", async () => {
+        await expect(
+          RoomRepo.create(mockRoomData),
+        ).rejects.toThrow();
+      });
     });
 
     describe("Get Room", () => {
@@ -84,6 +90,13 @@ describe("Room Booking Service", () => {
 
       it("WITHOUT FILTERS", async () => {
         const rooms = await RoomRepo.get({});
+
+        expect(Array.isArray(rooms)).toBe(true);
+        expect(rooms.length).toBeGreaterThanOrEqual(1);
+      });
+
+      it("WITH STATUS FILTER", async () => {
+        const rooms = await RoomRepo.get({ status: "available" });
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
@@ -155,6 +168,12 @@ describe("Room Booking Service", () => {
       it("WITH ERROR", async () => {
         await expect(RoomService.createRoom({} as Room)).rejects.toThrow();
       });
+
+      it("WITH ERROR - duplicate room number", async () => {
+        await expect(
+          RoomService.createRoom(mockRoomData),
+        ).rejects.toThrow();
+      });
     });
 
     describe("Get Room", () => {
@@ -194,6 +213,13 @@ describe("Room Booking Service", () => {
 
       it("WITHOUT FILTERS", async () => {
         const rooms = await RoomService.getRooms({});
+
+        expect(Array.isArray(rooms)).toBe(true);
+        expect(rooms.length).toBeGreaterThanOrEqual(1);
+      });
+
+      it("WITH STATUS FILTER", async () => {
+        const rooms = await RoomService.getRooms({ status: "available" });
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);

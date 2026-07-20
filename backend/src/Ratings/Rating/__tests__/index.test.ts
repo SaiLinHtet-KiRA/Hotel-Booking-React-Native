@@ -191,6 +191,46 @@ describe("Rating Service", () => {
           RatingService.updateRating(createdRating!._id.toString(), invalidData),
         ).rejects.toThrow();
       });
+
+      it("WITH ERROR BECAUSE OF RATING IS LESS THAN 0", async () => {
+        const invalidData: Rating = {
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: new mongoose.Types.ObjectId(),
+          rating: -1,
+          feed_back: "Negative rating",
+        };
+        await expect(
+          RatingService.updateRating(createdRating!._id.toString(), invalidData),
+        ).rejects.toThrow();
+      });
+
+      it("WITH ERROR BECAUSE OF RATING IS 0 AT BOUNDARY", async () => {
+        const boundaryData: Rating = {
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: new mongoose.Types.ObjectId(),
+          rating: 0,
+          feed_back: "Zero rating",
+        };
+        const updated = await RatingService.updateRating(
+          createdRating!._id.toString(),
+          boundaryData,
+        );
+        expect(updated.rating).toBe(0);
+      });
+
+      it("WITH SUCCESS - rating at boundary 5", async () => {
+        const boundaryData: Rating = {
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: mockRatingData.RatingsId,
+          rating: 5,
+          feed_back: "Max rating",
+        };
+        const updated = await RatingService.updateRating(
+          createdRating!._id.toString(),
+          boundaryData,
+        );
+        expect(updated.rating).toBe(5);
+      });
     });
 
     describe("Delete Rating", () => {

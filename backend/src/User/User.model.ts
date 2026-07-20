@@ -46,9 +46,9 @@ const DSchema = new Schema<UserDocument>(
       required: [true, "Role field is missing"],
       default: "user",
     },
-    bookings: { type: Schema.Types.ObjectId, required: true },
+    bookings: { type: Schema.Types.ObjectId },
   },
-  { versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 DSchema.pre("save", async function () {
