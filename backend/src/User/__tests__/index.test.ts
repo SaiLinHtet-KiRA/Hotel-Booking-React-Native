@@ -1,335 +1,390 @@
-// import { dbConnect, dbDisconnect } from "../../util/mongoDBConfigTest";
-// import { Rate, RateDocument } from "../User.model";
-// import RateRepo from "../User.repo";
-// import RateService from "../User.service";
-// import { express } from "../../server/index";
-// import request from "supertest";
+import mongoose from "mongoose";
+import { dbConnect, dbDisconnect } from "../../util/mongoDBConfigTest";
+import { User, UserDocument } from "../User.model";
+import UserRepo from "../User.repo";
+import UserService from "../User.service";
+import { express } from "../../server/index";
+import request from "supertest";
 
-// const mockRateData: Rate = {
-//   value: 33,
-//   currency: "THB",
-//   profit: 80,
-// };
+const mockUserData: User = {
+  name: "testuser",
+  password: "password123",
+  role: "user",
+};
 
-// let createdRate: RateDocument | null = null;
+let createdUser: UserDocument | null = null;
 
-// describe("Exchange Rate Service", () => {
-//   describe("Exchange Rate Repository", () => {
-//     beforeAll(async () => {
-//       await dbConnect();
-//     });
+describe("User Service", () => {
+  describe("User Repository", () => {
+    beforeAll(async () => {
+      await dbConnect();
+    });
 
-//     afterAll(async () => {
-//       await dbDisconnect();
-//       createdRate = null;
-//     });
+    afterAll(async () => {
+      await dbDisconnect();
+      createdUser = null;
+    });
 
-//     describe("Create Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         createdRate = await RateRepo.create(mockRateData);
+    describe("Create User", () => {
+      it("WITH SUCCESS", async () => {
+        createdUser = await UserRepo.create(mockUserData);
 
-//         expect(createdRate).not.toBeNull();
-//         expect(createdRate._id).not.toBeNull();
-//         expect(createdRate.toJSON()).toMatchObject({
-//           value: mockRateData.value,
-//           currency: mockRateData.currency,
-//           profit: mockRateData.profit,
-//         });
-//       });
+        expect(createdUser).not.toBeNull();
+        expect(createdUser._id).not.toBeNull();
+        expect(createdUser.name).toBe(mockUserData.name);
+        expect(createdUser.role).toBe(mockUserData.role);
+        expect(typeof createdUser.id).toBe("number");
+      });
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateRepo.create({} as Rate)).rejects.toThrow();
-//       });
-//     });
+      it("WITH ERROR", async () => {
+        await expect(UserRepo.create({} as User)).rejects.toThrow();
+      });
+    });
 
-//     describe("Get Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const rate = await RateRepo.getByID(createdRate!._id.toString());
+    describe("Get User", () => {
+      it("WITH SUCCESS", async () => {
+        const user = await UserRepo.getByID(createdUser!._id.toString());
 
-//         expect(rate._id.toString()).toBe(createdRate?._id.toString());
-//         expect(rate.value).toBe(createdRate?.value);
-//         expect(rate.currency).toBe(createdRate?.currency);
-//         expect(rate.profit).toBe(createdRate?.profit);
-//       });
+        expect(user._id.toString()).toBe(createdUser?._id.toString());
+        expect(user.name).toBe(createdUser?.name);
+        expect(user.role).toBe(createdUser?.role);
+      });
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateRepo.getByID("wecq22daaewccs")).rejects.toThrow();
-//       });
-//     });
+      it("WITH ERROR", async () => {
+        await expect(UserRepo.getByID("wecq22daaewccs")).rejects.toThrow();
+      });
+    });
 
-//     describe("Update Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const mockRateData: Rate = {
-//           value: 34,
-//           currency: "MMK",
-//           profit: 20,
-//         };
-//         const updatedExchangeRate = await RateRepo.update(
-//           createdRate!._id.toString(),
-//           mockRateData,
-//         );
+    describe("List Users", () => {
+      it("WITH SUCCESS", async () => {
+        const users = await UserRepo.get({});
 
-//         expect(updatedExchangeRate.toJSON()).toMatchObject({
-//           value: mockRateData.value,
-//           currency: mockRateData.currency,
-//           profit: mockRateData.profit,
-//         });
-//       });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
 
-//       it("WITH ERROR", async () => {
-//         await expect(
-//           RateRepo.update("dadcrfdsdfs", {} as Rate),
-//         ).rejects.toThrow();
-//       });
-//     });
+      it("WITH PAGINATION", async () => {
+        const users = await UserRepo.get({ page: 0, limit: 10 });
 
-//     describe("Delete Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const deletedExchangeRate = await RateRepo.delete(
-//           createdRate!._id.toString(),
-//         );
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
 
-//         expect(deletedExchangeRate._id.toString()).toBe(createdRate?._id.toString());
-//       });
+      it("WITH ROLE FILTER", async () => {
+        const users = await UserRepo.get({ role: "user" });
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateRepo.delete("dadcrfdsdfs")).rejects.toThrow();
-//       });
-//     });
-//   });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
 
-//   describe("Exchange Rate Service", () => {
-//     beforeAll(async () => {
-//       await dbConnect();
-//     });
+      it("WITH NAME FILTER", async () => {
+        const users = await UserRepo.get({ name: createdUser?.name });
 
-//     afterAll(async () => {
-//       await dbDisconnect();
-//       createdRate = null;
-//     });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
+    });
 
-//     describe("Create Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         createdRate = await RateService.createRate(mockRateData);
-//         expect(createdRate).not.toBeNull();
-//         expect(createdRate._id).not.toBeNull();
-//         expect(createdRate.value).toBe(mockRateData.value);
-//         expect(createdRate.currency).toBe(mockRateData.currency);
-//         expect(createdRate.profit).toBe(mockRateData.profit);
-//       });
+    describe("Update User", () => {
+      it("WITH SUCCESS", async () => {
+        const updatedUser = await UserRepo.update(
+          createdUser!._id.toString(),
+          { name: "updateduser", role: "owner" },
+        );
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateService.createRate({} as Rate)).rejects.toThrow();
-//       });
-//     });
+        expect(updatedUser!._id.toString()).toBe(createdUser?._id.toString());
+        expect(updatedUser!.name).toBe("updateduser");
+        expect(updatedUser!.role).toBe("owner");
+      });
 
-//     describe("Get Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const rate = await RateService.getRate(createdRate!._id.toString());
-//         expect(rate._id.toString()).toBe(createdRate?._id.toString());
-//       });
+      it("WITH ERROR", async () => {
+        await expect(
+          UserRepo.update("dadcrfdsdfs", {} as User),
+        ).rejects.toThrow();
+      });
+    });
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateService.getRate("wecq22daaewccs")).rejects.toThrow();
-//       });
-//     });
+    describe("Delete User", () => {
+      it("WITH SUCCESS", async () => {
+        const deletedUser = await UserRepo.delete(
+          createdUser!._id.toString(),
+        );
 
-//     describe("Update Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const mockRateData: Rate = {
-//           value: 34,
-//           currency: "MMK",
-//           profit: 20,
-//         };
-//         const updatedExchangeRate = await RateService.updateRate(
-//           createdRate!._id.toString(),
-//           mockRateData,
-//         );
+        expect(deletedUser._id.toString()).toBe(createdUser?._id.toString());
+      });
 
-//         expect(updatedExchangeRate.value).toBe(mockRateData.value);
-//       });
+      it("WITH ERROR", async () => {
+        await expect(UserRepo.delete("dadcrfdsdfs")).rejects.toThrow();
+      });
+    });
+  });
 
-//       it("WITH ERROR", async () => {
-//         await expect(
-//           RateService.updateRate("dadcrfdsdfs", {} as Rate),
-//         ).rejects.toThrow();
-//       });
+  describe("User Service", () => {
+    beforeAll(async () => {
+      await dbConnect();
+    });
 
-//       it("WITH ERROR BECAUSE OF PROFIT IS GREATER THAN 100", async () => {
-//         const mockRateData: Rate = {
-//           value: 34,
-//           currency: "MMK",
-//           profit: 110,
-//         };
-//         await expect(
-//           RateService.updateRate(createdRate!._id.toString(), mockRateData),
-//         ).rejects.toThrow();
-//       });
-//     });
+    afterAll(async () => {
+      await dbDisconnect();
+      createdUser = null;
+    });
 
-//     describe("Delete Exchange Rate", () => {
-//       it("WITH SUCCESS", async () => {
-//         const deletedExchangeRate = await RateService.deleteRate(
-//           createdRate!._id.toString(),
-//         );
+    describe("Create User", () => {
+      it("WITH SUCCESS", async () => {
+        createdUser = await UserService.createUser(mockUserData);
+        expect(createdUser).not.toBeNull();
+        expect(createdUser._id).not.toBeNull();
+        expect(createdUser.name).toBe(mockUserData.name);
+        expect(createdUser.role).toBe(mockUserData.role);
+        expect(typeof createdUser.id).toBe("number");
+      });
 
-//         expect(deletedExchangeRate._id.toString()).toBe(createdRate?._id.toString());
-//       });
+      it("WITH ERROR", async () => {
+        await expect(UserService.createUser({} as User)).rejects.toThrow();
+      });
+    });
 
-//       it("WITH ERROR", async () => {
-//         await expect(RateService.deleteRate("dadcrfdsdfs")).rejects.toThrow();
-//       });
-//     });
-//   });
+    describe("Get User", () => {
+      it("WITH SUCCESS", async () => {
+        const user = await UserService.getUser(createdUser!._id.toString());
+        expect(user._id.toString()).toBe(createdUser?._id.toString());
+        expect(user.name).toBe(createdUser?.name);
+      });
 
-//   describe("Exchange Rate API", () => {
-//     beforeAll(async () => {
-//       await dbConnect();
-//     });
+      it("WITH ERROR", async () => {
+        await expect(UserService.getUser("wecq22daaewccs")).rejects.toThrow();
+      });
+    });
 
-//     afterAll(async () => {
-//       await dbDisconnect();
-//       createdRate = null;
-//     });
+    describe("List Users", () => {
+      it("WITH SUCCESS", async () => {
+        const users = await UserService.getUsers({});
 
-//     describe("POST /user", () => {
-//       it("Status 200 Success", async () => {
-//         await request(express.app)
-//           .post("/user")
-//           .send(mockRateData)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(200)
-//           .then((response) => {
-//             createdRate = response.body.data;
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toMatchObject({
-//               value: mockRateData.value,
-//               currency: mockRateData.currency,
-//               profit: mockRateData.profit,
-//             });
-//           });
-//       });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
 
-//       it("Status 400 Error", async () => {
-//         await request(express.app)
-//           .post("/user")
-//           .send({} as Rate)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(400)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toBeNull();
-//           });
-//       });
-//     });
+      it("WITH PAGINATION", async () => {
+        const users = await UserService.getUsers({ page: 0, limit: 10 });
 
-//     describe("GET /user/:id", () => {
-//       it("Status 200 Success", async () => {
-//         await request(express.app)
-//           .get("/user/" + createdRate?._id)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(200)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data._id).toBe(createdRate?._id.toString());
-//           });
-//       });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
 
-//       it("Status 500 Error", async () => {
-//         await request(express.app)
-//           .get("/user/msfkmsdfsf")
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(500)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toBeNull();
-//           });
-//       });
-//     });
+      it("WITH ROLE FILTER", async () => {
+        const users = await UserService.getUsers({ role: "user" });
 
-//     describe("PATCH /user/:id", () => {
-//       it("Status 200 Success", async () => {
-//         const mockRateData: Rate = {
-//           value: 34,
-//           currency: "MMK",
-//           profit: 20,
-//         };
-//         await request(express.app)
-//           .patch("/user/" + createdRate?._id)
-//           .send(mockRateData)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(200)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toMatchObject({
-//               value: mockRateData.value,
-//               currency: mockRateData.currency,
-//               profit: mockRateData.profit,
-//             });
-//           });
-//       });
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThanOrEqual(1);
+      });
+    });
 
-//       it("Status 400 Error BECAUSE OF GREATER THAN 100", async () => {
-//         const mockRateData: Rate = {
-//           value: 34,
-//           currency: "MMK",
-//           profit: 101,
-//         };
-//         await request(express.app)
-//           .patch("/user/" + createdRate?._id)
-//           .send(mockRateData)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(400)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toBeNull();
-//           });
-//       });
+    describe("Update User", () => {
+      it("WITH SUCCESS", async () => {
+        const updatedUser = await UserService.updateUser(
+          createdUser!._id.toString(),
+          { name: "updateduser2", role: "admin" },
+        );
 
-//       it("Status 400 Error", async () => {
-//         await request(express.app)
-//           .patch("/user/" + createdRate?._id)
-//           .send({})
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(400)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toBeNull();
-//           });
-//       });
-//     });
+        expect(updatedUser!._id.toString()).toBe(createdUser?._id.toString());
+        expect(updatedUser!.name).toBe("updateduser2");
+        expect(updatedUser!.role).toBe("admin");
+      });
 
-//     describe("DELETE /user/:id", () => {
-//       it("Status 200 Success", async () => {
-//         await request(express.app)
-//           .delete("/user/" + createdRate?._id)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(200)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data._id).toBe(createdRate?._id.toString());
-//           });
-//       });
+      it("WITH ERROR", async () => {
+        await expect(
+          UserService.updateUser("dadcrfdsdfs", {} as User),
+        ).rejects.toThrow();
+      });
 
-//       it("Status 404 Error", async () => {
-//         await request(express.app)
-//           .delete("/user/" + createdRate?._id)
-//           .set("Accept", "application/json")
-//           .expect("Content-Type", /json/)
-//           .expect(404)
-//           .then((response) => {
-//             expect(response.body.message).toBeTruthy();
-//             expect(response.body.data).toBeNull();
-//           });
-//       });
-//     });
-//   });
-// });
+      it("WITH ERROR BECAUSE OF INVALID ROLE", async () => {
+        await expect(
+          UserService.updateUser(createdUser!._id.toString(), {
+            name: "test",
+            role: "invalid",
+          }),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("Delete User", () => {
+      it("WITH SUCCESS", async () => {
+        const deletedUser = await UserService.deleteUser(
+          createdUser!._id.toString(),
+        );
+
+        expect(deletedUser._id.toString()).toBe(createdUser?._id.toString());
+      });
+
+      it("WITH ERROR", async () => {
+        await expect(UserService.deleteUser("dadcrfdsdfs")).rejects.toThrow();
+      });
+    });
+  });
+
+  describe("User API", () => {
+    beforeAll(async () => {
+      await dbConnect();
+    });
+
+    afterAll(async () => {
+      await dbDisconnect();
+      createdUser = null;
+    });
+
+    describe("POST /user", () => {
+      it("Status 200 Success", async () => {
+        await request(express.app)
+          .post("/user")
+          .send(mockUserData)
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            createdUser = response.body.data;
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data.name).toBe(mockUserData.name);
+            expect(response.body.data.role).toBe(mockUserData.role);
+            expect(response.body.data.id).toBeGreaterThan(0);
+          });
+      });
+
+      it("Status 400 Error", async () => {
+        await request(express.app)
+          .post("/user")
+          .send({})
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data).toBeNull();
+          });
+      });
+    });
+
+    describe("GET /user", () => {
+      it("Status 200 Success", async () => {
+        await request(express.app)
+          .get("/user")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(Array.isArray(response.body.data)).toBe(true);
+            expect(response.body.data.length).toBeGreaterThanOrEqual(1);
+          });
+      });
+
+      it("Status 200 with pagination", async () => {
+        await request(express.app)
+          .get("/user?page=0&limit=10")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(Array.isArray(response.body.data)).toBe(true);
+          });
+      });
+    });
+
+    describe("GET /user/:id", () => {
+      it("Status 200 Success", async () => {
+        await request(express.app)
+          .get("/user/" + createdUser!._id)
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data._id).toBe(createdUser?._id.toString());
+            expect(response.body.data.name).toBe(createdUser?.name);
+            expect(response.body.data.id).toBeGreaterThan(0);
+          });
+      });
+
+      it("Status 500 Error", async () => {
+        await request(express.app)
+          .get("/user/msfkmsdfsf")
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(500)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data).toBeNull();
+          });
+      });
+    });
+
+    describe("PATCH /user/:id", () => {
+      it("Status 200 Success", async () => {
+        await request(express.app)
+          .patch("/user/" + createdUser!._id)
+          .send({ name: "updateduser3", role: "owner" })
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data._id).toBe(createdUser?._id.toString());
+            expect(response.body.data.name).toBe("updateduser3");
+            expect(response.body.data.role).toBe("owner");
+          });
+      });
+
+      it("Status 400 Error BECAUSE OF INVALID ROLE", async () => {
+        await request(express.app)
+          .patch("/user/" + createdUser!._id)
+          .send({ name: "test", role: "invalid" })
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data).toBeNull();
+          });
+      });
+
+      it("Status 400 Error", async () => {
+        await request(express.app)
+          .patch("/user/" + createdUser!._id)
+          .send({})
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data).toBeNull();
+          });
+      });
+    });
+
+    describe("DELETE /user/:id", () => {
+      it("Status 200 Success", async () => {
+        await request(express.app)
+          .delete("/user/" + createdUser!._id)
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data._id).toBe(createdUser?._id.toString());
+          });
+      });
+
+      it("Status 404 Error", async () => {
+        await request(express.app)
+          .delete("/user/" + createdUser!._id)
+          .set("Accept", "application/json")
+          .expect("Content-Type", /json/)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.message).toBeTruthy();
+            expect(response.body.data).toBeNull();
+          });
+      });
+    });
+  });
+});

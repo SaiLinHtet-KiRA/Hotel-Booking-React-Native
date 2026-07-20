@@ -4,8 +4,20 @@ import AuthControllerType from "./interface/Auth.controller.type";
 import LoginType from "./interface/Schema";
 import AuthService from "./Auth.service";
 import UserService from "../User.service";
+import { User } from "../User.model";
 
 class AuthController implements AuthControllerType {
+  async SingUp(
+    req: Request<null, null, User, null>,
+    res: Response<{ message: string }>,
+  ): Promise<void> {
+    try {
+      await UserService.createUser(req.body);
+      res.status(200).json({ message: "Account was successfully created" });
+    } catch (error) {
+      throw error;
+    }
+  }
   async Login(
     req: Request<null, null, LoginType, null>,
     res: Response<{ message: string }>,
@@ -24,7 +36,13 @@ class AuthController implements AuthControllerType {
     req: Request<null, null, null, null>,
     res: Response<{
       message: string;
-      data?: { _id: string; name: string; role: string; records: unknown[]; id: number };
+      data?: {
+        _id: string;
+        name: string;
+        role: string;
+        records: unknown[];
+        id: number;
+      };
     }>,
   ): Promise<void> {
     try {
@@ -34,13 +52,13 @@ class AuthController implements AuthControllerType {
         });
         return;
       }
-      const { name, role, records, id, _id } = await UserService.getUser(
+      const { name, role, id, _id } = await UserService.getUser(
         req.session.userId,
       );
 
       res.json({
         message: "Logged In",
-        data: { _id: String(_id), name, role, records, id },
+        data: { _id: String(_id), name, role, id },
       });
     } catch (error) {
       throw error;

@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import LoginType from "./Schema";
+import { User } from "../../User.model";
 
 export default interface AuthControllerType {
+  SingUp(
+    req: Request<null, null, User, null>,
+    res: Response<{ message: string }>,
+  ): Promise<void>;
   Login(
     req: Request<null, null, LoginType, null>,
     res: Response<{ message: string }>,

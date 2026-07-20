@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Room, RoomDocument } from "./Room.model";
+import { RoomDocument } from "./Room.model";
 import RoomControllerType, {
   RoomCreateBody,
 } from "./interface/Room.controller.type";
@@ -44,10 +44,7 @@ class RoomController implements RoomControllerType {
   ): Promise<void> {
     try {
       const { id } = req.params;
-      const roomData: Room = {
-        ...req.body,
-        userId: req.session.userId!,
-      };
+      const roomData = req.body;
       const Room = await RoomService.updateRoom(id, roomData);
       res
         .status(200)
@@ -62,10 +59,8 @@ class RoomController implements RoomControllerType {
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
-      const roomData: Room = {
-        ...req.body,
-        userId: req.session.userId!,
-      };
+      const roomData = req.body;
+
       const Room = await RoomService.createRoom(roomData);
       res
         .status(200)

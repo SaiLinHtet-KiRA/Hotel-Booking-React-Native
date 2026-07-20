@@ -5,21 +5,12 @@ import { PaginationQuery } from "./interface/Room.query.type";
 import RoomRepoType from "./interface/Room.repo.type";
 
 class RoomRepo implements RoomRepoType {
-  async get({ limit, page, time }: PaginationQuery): Promise<RoomDocument[]> {
+  async get({ limit, page, type }: PaginationQuery): Promise<RoomDocument[]> {
     try {
       const Rooms = await RoomModel.find(
-        time
+        type
           ? {
-              $or: [
-                {
-                  startTime: { $gte: new Date(Number(time)) },
-                  endTime: { $lte: new Date(Number(time)) },
-                },
-                {
-                  endTime: { $gte: new Date(Number(time)) },
-                  startTime: { $lte: new Date(Number(time)) },
-                },
-              ],
+              type: type,
             }
           : {},
         {},

@@ -5,24 +5,21 @@ import bcrypt from "bcrypt";
 
 export const UserSchema = z.object({
   name: z.string({ error: "Name field is missing!!!" }),
+  email: z.string({ error: "Name field is missing!!!" }),
   password: z
     .string({ error: "Password field is missing!!!" })
     .min(8, "Password must be at least 8 characters"),
   role: z
     .string({ error: "Role field is missing!!!" })
-    .refine(
-      (value) => value == "admin" || value == "owner" || value == "user",
-      {
-        message: "Invalid Role",
-      },
-    ),
+    .refine((value) => value == "admin" || value == "user", {
+      message: "Invalid Role",
+    })
+    .optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;
 
-export type UserDocument<T = Schema.Types.ObjectId[]> = HydratedDocument<
-  User & { id: number; records: T }
->;
+export type UserDocument = HydratedDocument<User & { id: number }>;
 
 const DSchema = new Schema<UserDocument>(
   {
@@ -42,10 +39,10 @@ const DSchema = new Schema<UserDocument>(
     },
     role: {
       type: String,
-      enum: ["admin", "owner", "user"],
+      enum: ["admin", "user"],
       required: [true, "Role field is missing"],
+      default: "user",
     },
-    records: { type: [Schema.Types.ObjectId], ref: "Room" },
   },
   { versionKey: false },
 );
