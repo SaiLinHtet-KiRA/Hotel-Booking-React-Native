@@ -16,7 +16,7 @@ class UserRepo implements UserRepoType {
       const Users = await UserModel.find(
         name
           ? { name }
-          : role == "admin" || role == "owner" || role == "user"
+          : role == "admin" || role == "user"
             ? {
                 role,
               }

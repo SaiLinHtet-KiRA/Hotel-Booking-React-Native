@@ -1,5 +1,4 @@
 import { UpdateQuery } from "mongoose";
-import RoomService from "../Room/Room.service";
 import { validateZod } from "../util/validate";
 import { PaginationQuery } from "./interface/User.query.type";
 import UserServiceType from "./interface/User.service.type";
@@ -42,9 +41,7 @@ class UserService implements UserServiceType {
   async deleteUser(id: string): Promise<UserDocument> {
     try {
       const deletedUser = await UserRepo.delete(id);
-      deletedUser.records.map(
-        async (id) => await RoomService.deleteRoom(id.toString()),
-      );
+
       return deletedUser;
     } catch (error) {
       throw error;

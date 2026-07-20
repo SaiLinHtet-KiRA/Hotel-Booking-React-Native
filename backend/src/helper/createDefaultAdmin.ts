@@ -12,6 +12,7 @@ export async function createDefaultAdmin() {
     }
     await UserService.createUser({
       name: ADMIN_NAME,
+      email: ADMIN_NAME,
       password: ADMIN_PASSWORD,
       role: "admin",
     });

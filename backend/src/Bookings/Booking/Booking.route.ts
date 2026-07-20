@@ -1,11 +1,10 @@
 import { Router } from "express";
-import RatingController from "./Rating.controller";
+import BookingController from "./Booking.controller";
 
 const route = Router();
 
-route.get("/rating/:id", RatingController.getRating);
-route.post("/rating", RatingController.createRating);
-route.patch("/rating/:id", RatingController.updateRating);
-route.delete("/rating/:id", RatingController.deleteRating);
+route.get("/booking/:id", BookingController.getBooking);
+route.post("/booking", BookingController.createBooking);
+route.delete("/booking/:id", BookingController.deleteBooking);
 
 export default route;

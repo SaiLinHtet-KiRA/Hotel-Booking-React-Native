@@ -1,9 +1,9 @@
-import { Rating, RatingDocument } from "../Booking.model";
+import { Booking, BookingDocument } from "../Booking.model";
 
-export default interface RatingRepoType {
-  get(): Promise<RatingDocument[]>;
-  getByID(id: string): Promise<RatingDocument>;
-  create(data: Rating): Promise<RatingDocument>;
-  update(id: string, data: Rating): Promise<RatingDocument>;
-  delete(id: string): Promise<RatingDocument>;
+export default interface BookingRepoType {
+  get(): Promise<BookingDocument[]>;
+  getByID(id: string): Promise<BookingDocument>;
+  create(data: Booking): Promise<BookingDocument>;
+  update(id: string, data: Booking): Promise<BookingDocument>;
+  delete(id: string): Promise<BookingDocument>;
 }

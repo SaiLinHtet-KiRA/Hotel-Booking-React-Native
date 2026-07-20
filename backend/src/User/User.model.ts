@@ -1,7 +1,8 @@
-import mongoose, { Schema, HydratedDocument } from "mongoose";
+import mongoose, { Schema, HydratedDocument, Types } from "mongoose";
 import { z } from "zod";
 import { getNextSequence } from "../helper/Counter";
 import bcrypt from "bcrypt";
+import BookingsService from "../Bookings/Bookings.service";
 
 export const UserSchema = z.object({
   name: z.string({ error: "Name field is missing!!!" }),
@@ -19,7 +20,9 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-export type UserDocument = HydratedDocument<User & { id: number }>;
+export type UserDocument = HydratedDocument<
+  User & { id: number; bookings: Types.ObjectId }
+>;
 
 const DSchema = new Schema<UserDocument>(
   {
@@ -43,6 +46,7 @@ const DSchema = new Schema<UserDocument>(
       required: [true, "Role field is missing"],
       default: "user",
     },
+    bookings: { type: Schema.Types.ObjectId, required: true },
   },
   { versionKey: false },
 );
@@ -50,6 +54,9 @@ const DSchema = new Schema<UserDocument>(
 DSchema.pre("save", async function () {
   if (this.isNew) {
     this.id = (await getNextSequence("UserId"))!;
+    this.bookings = (
+      await BookingsService.createBookings({ bookings: [] })
+    )._id;
   }
 });
 

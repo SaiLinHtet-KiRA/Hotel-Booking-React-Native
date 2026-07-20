@@ -1,45 +1,45 @@
-import { RatingDocument, Rating, RatingSchema } from "./Booking.model";
-import RatingRepo from "./Booking.repo";
-import RatingServiceType from "./interface/Rating.service.type";
+import { BookingDocument, Booking, BookingSchema } from "./Booking.model";
+import BookingRepo from "./Booking.repo";
+import BookingServiceType from "./interface/Booking.service.type";
 import { validateZod } from "../../util/validate";
-import RatingsService from "../Ratings.service";
+import BookingsService from "../Bookings.service";
 
-class RatingService implements RatingServiceType {
-  async getRatings(): Promise<RatingDocument[]> {
+class BookingService implements BookingServiceType {
+  async getBookings(): Promise<BookingDocument[]> {
     try {
-      const Ratings = await RatingRepo.get();
-      return Ratings;
+      const Bookings = await BookingRepo.get();
+      return Bookings;
     } catch (error) {
       throw error;
     }
   }
-  async getRating(id: string): Promise<RatingDocument> {
+  async getBooking(id: string): Promise<BookingDocument> {
     try {
-      return await RatingRepo.getByID(id);
+      return await BookingRepo.getByID(id);
     } catch (error) {
       throw error;
     }
   }
-  async createRating(data: Rating): Promise<RatingDocument> {
+  async createBooking(data: Booking): Promise<BookingDocument> {
     try {
-      const RatingData = validateZod(RatingSchema, data);
+      const BookingData = validateZod(BookingSchema, data);
 
-      const newRating = await RatingRepo.create(RatingData);
-      await RatingsService.updateRatings(newRating.RatingsId, {
-        $push: { ratings: newRating._id },
+      const newBooking = await BookingRepo.create(BookingData);
+      await BookingsService.updateBookings(newBooking.bookings, {
+        $push: { bookings: newBooking._id },
       });
 
-      return newRating;
+      return newBooking;
     } catch (error) {
       throw error;
     }
   }
-  async updateRating(id: string, data: Rating): Promise<RatingDocument> {
+  async updateBooking(id: string, data: Booking): Promise<BookingDocument> {
     try {
       try {
-        const RatingData = validateZod(RatingSchema, data);
+        const BookingData = validateZod(BookingSchema, data);
 
-        return await RatingRepo.update(id, RatingData);
+        return await BookingRepo.update(id, BookingData);
       } catch (error) {
         throw error;
       }
@@ -47,19 +47,19 @@ class RatingService implements RatingServiceType {
       throw error;
     }
   }
-  async deleteRating(id: string): Promise<RatingDocument> {
+  async deleteBooking(id: string): Promise<BookingDocument> {
     try {
-      const deletedRating = await RatingRepo.delete(id);
+      const deletedBooking = await BookingRepo.delete(id);
 
-      await RatingsService.updateRatings(deletedRating.RatingsId, {
-        $pull: { ratings: deletedRating._id },
+      await BookingsService.updateBookings(deletedBooking.bookings, {
+        $pull: { bookings: deletedBooking._id },
       });
 
-      return deletedRating;
+      return deletedBooking;
     } catch (error) {
       throw error;
     }
   }
 }
 
-export default new RatingService();
+export default new BookingService();

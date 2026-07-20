@@ -11,8 +11,8 @@ const errors_1 = require("../../util/error/errors");
 class AuthService {
     async checkPasswordIsCorrect(data) {
         try {
-            const { name, password } = (0, validate_1.validateZod)(Schema_1.LoginSchema, data);
-            const existingUser = await User_service_1.default.getUsers({ name });
+            const { email, password } = (0, validate_1.validateZod)(Schema_1.LoginSchema, data);
+            const existingUser = await User_service_1.default.getUsers({ name: email });
             if (!existingUser.length) {
                 throw new errors_1.AuthorizeError("Invalid name or password");
             }

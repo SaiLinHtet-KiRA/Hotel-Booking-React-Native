@@ -6,6 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Auth_service_1 = __importDefault(require("./Auth.service"));
 const User_service_1 = __importDefault(require("../User.service"));
 class AuthController {
+    async SingUp(req, res) {
+        try {
+            await User_service_1.default.createUser(req.body);
+            res.status(200).json({ message: "Account was successfully created" });
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async Login(req, res) {
         try {
             const userId = await Auth_service_1.default.checkPasswordIsCorrect(req.body);
@@ -24,10 +33,10 @@ class AuthController {
                 });
                 return;
             }
-            const { name, role, records, id, _id } = await User_service_1.default.getUser(req.session.userId);
+            const { name, role, id, _id } = await User_service_1.default.getUser(req.session.userId);
             res.json({
                 message: "Logged In",
-                data: { _id: String(_id), name, role, records, id },
+                data: { _id: String(_id), name, role: role, id },
             });
         }
         catch (error) {

@@ -21,7 +21,7 @@ describe("Ratings Service", () => {
 
     describe("Create Ratings", () => {
       it("WITH SUCCESS", async () => {
-        createdRatings = await RatingsRepo.create({});
+        createdRatings = await RatingsRepo.create({ ratings: [] });
 
         expect(createdRatings).not.toBeNull();
         expect(createdRatings._id).not.toBeNull();
@@ -96,7 +96,7 @@ describe("Ratings Service", () => {
 
     describe("Create Ratings", () => {
       it("WITH SUCCESS", async () => {
-        createdRatings = await RatingsService.createRatings({});
+        createdRatings = await RatingsService.createRatings({ ratings: [] });
         expect(createdRatings).not.toBeNull();
         expect(createdRatings._id).not.toBeNull();
         expect(createdRatings.average).toBe(0);
@@ -175,7 +175,7 @@ describe("Ratings Service", () => {
 
     describe("GET /ratings/:id", () => {
       beforeAll(async () => {
-        createdRatings = await RatingsService.createRatings({});
+        createdRatings = await RatingsService.createRatings({ ratings: [] });
       });
 
       it("Status 200 Success", async () => {

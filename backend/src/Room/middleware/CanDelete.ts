@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthorizeError } from "../../util/error/errors";
 import UserService from "../../User/User.service";
-import RoomService from "../Room.service";
 
 async function CanDelete(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,13 +17,8 @@ async function CanDelete(
 
     if (!id) throw Error("id is missing!!");
 
-    const existingBooking = await RoomService.getRoom(id);
-
-    if (existingBooking.userId._id.toString() == req.session.userId)
-      return next();
-
-    if (user.role !== "admin" && user.role !== "owner") {
-      throw new AuthorizeError("Admin or owner access required");
+    if (user.role !== "admin") {
+      throw new AuthorizeError("Admin access required");
     }
 
     next();

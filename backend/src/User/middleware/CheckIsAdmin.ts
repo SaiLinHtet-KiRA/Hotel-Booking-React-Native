@@ -15,7 +15,7 @@ async function CheckIsAdmin(
 
     const user = await UserService.getUser(req.session.userId);
 
-    if (user.role !== "admin" && user.role !== "owner") {
+    if (user.role !== "admin") {
       throw new AuthorizeError("Admin access required");
     }
 

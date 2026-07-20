@@ -41,16 +41,19 @@ const mongoose_1 = __importStar(require("mongoose"));
 const zod_1 = require("zod");
 const Counter_1 = require("../helper/Counter");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const Bookings_service_1 = __importDefault(require("../Bookings/Bookings.service"));
 exports.UserSchema = zod_1.z.object({
     name: zod_1.z.string({ error: "Name field is missing!!!" }),
+    email: zod_1.z.string({ error: "Name field is missing!!!" }),
     password: zod_1.z
         .string({ error: "Password field is missing!!!" })
         .min(8, "Password must be at least 8 characters"),
     role: zod_1.z
         .string({ error: "Role field is missing!!!" })
-        .refine((value) => value == "admin" || value == "owner" || value == "user", {
+        .refine((value) => value == "admin" || value == "user", {
         message: "Invalid Role",
-    }),
+    })
+        .optional(),
 });
 const DSchema = new mongoose_1.Schema({
     id: {
@@ -68,14 +71,16 @@ const DSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "owner", "user"],
+        enum: ["admin", "user"],
         required: [true, "Role field is missing"],
+        default: "user",
     },
-    records: { type: [mongoose_1.Schema.Types.ObjectId], ref: "Room" },
+    bookings: { type: mongoose_1.Schema.Types.ObjectId, required: true },
 }, { versionKey: false });
 DSchema.pre("save", async function () {
     if (this.isNew) {
         this.id = (await (0, Counter_1.getNextSequence)("UserId"));
+        this.bookings = (await Bookings_service_1.default.createBookings({ bookings: [] }))._id;
     }
 });
 DSchema.pre("save", async function () {

@@ -3,19 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
 const mongoDBConfigTest_1 = require("../../util/mongoDBConfigTest");
 const Room_repo_1 = __importDefault(require("../Room.repo"));
 const Room_service_1 = __importDefault(require("../Room.service"));
 const index_1 = require("../../server/index");
 const supertest_1 = __importDefault(require("supertest"));
-const userId = new mongoose_1.default.Types.ObjectId().toString();
-const startTime = new Date();
-const endTime = new Date(Date.now() + 3600000);
 const mockRoomData = {
-    startTime,
-    endTime,
-    userId: userId,
+    number: 101,
+    type: "single bed",
+    photo: [],
+    capacity: 2,
+    price: 100,
+    status: "available",
 };
 let createdRoom = null;
 describe("Room Booking Service", () => {
@@ -32,10 +31,11 @@ describe("Room Booking Service", () => {
                 createdRoom = await Room_repo_1.default.create(mockRoomData);
                 expect(createdRoom).not.toBeNull();
                 expect(createdRoom._id).not.toBeNull();
-                expect(createdRoom.startTime).toBeInstanceOf(Date);
-                expect(createdRoom.endTime).toBeInstanceOf(Date);
-                expect(createdRoom.userId.toString()).toBe(userId);
-                expect(typeof createdRoom.id).toBe("number");
+                expect(createdRoom.number).toBe(mockRoomData.number);
+                expect(createdRoom.type).toBe(mockRoomData.type);
+                expect(createdRoom.capacity).toBe(mockRoomData.capacity);
+                expect(createdRoom.price).toBe(mockRoomData.price);
+                expect(createdRoom.status).toBe(mockRoomData.status);
             });
             it("WITH ERROR", async () => {
                 await expect(Room_repo_1.default.create({})).rejects.toThrow();
@@ -45,9 +45,8 @@ describe("Room Booking Service", () => {
             it("WITH SUCCESS", async () => {
                 const room = await Room_repo_1.default.getByID(createdRoom._id.toString());
                 expect(room._id.toString()).toBe(createdRoom?._id.toString());
-                expect(room.startTime).toBeInstanceOf(Date);
-                expect(room.endTime).toBeInstanceOf(Date);
-                expect(room.userId.toString()).toBe(userId);
+                expect(room.number).toBe(createdRoom?.number);
+                expect(room.type).toBe(createdRoom?.type);
             });
             it("WITH ERROR", async () => {
                 await expect(Room_repo_1.default.getByID("wecq22daaewccs")).rejects.toThrow();
@@ -58,15 +57,14 @@ describe("Room Booking Service", () => {
                 const rooms = await Room_repo_1.default.get({});
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
-                expect(rooms[0].startTime).toBeInstanceOf(Date);
             });
             it("WITH PAGINATION", async () => {
                 const rooms = await Room_repo_1.default.get({ page: 0, limit: 10 });
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });
-            it("WITH TIME FILTER", async () => {
-                const rooms = await Room_repo_1.default.get({ time: startTime.getTime() });
+            it("WITH TYPE FILTER", async () => {
+                const rooms = await Room_repo_1.default.get({ type: "single bed" });
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });
@@ -78,16 +76,17 @@ describe("Room Booking Service", () => {
         });
         describe("Update Room", () => {
             it("WITH SUCCESS", async () => {
-                const newStartTime = new Date(Date.now() + 1000000);
-                const newEndTime = new Date(Date.now() + 8200000);
-                const newUserId = new mongoose_1.default.Types.ObjectId().toString();
                 const updatedRoom = await Room_repo_1.default.update(createdRoom._id.toString(), {
-                    startTime: newStartTime,
-                    endTime: newEndTime,
-                    userId: newUserId,
+                    number: 202,
+                    type: "deluxe",
+                    capacity: 4,
+                    price: 300,
+                    status: "maintenance",
                 });
                 expect(updatedRoom._id.toString()).toBe(createdRoom?._id.toString());
-                expect(updatedRoom.userId.toString()).toBe(newUserId);
+                expect(updatedRoom.number).toBe(202);
+                expect(updatedRoom.type).toBe("deluxe");
+                expect(updatedRoom.status).toBe("maintenance");
             });
             it("WITH ERROR", async () => {
                 await expect(Room_repo_1.default.update("dadcrfdsdfs", {})).rejects.toThrow();
@@ -116,10 +115,9 @@ describe("Room Booking Service", () => {
                 createdRoom = await Room_service_1.default.createRoom(mockRoomData);
                 expect(createdRoom).not.toBeNull();
                 expect(createdRoom._id).not.toBeNull();
-                expect(createdRoom.startTime).toBeInstanceOf(Date);
-                expect(createdRoom.endTime).toBeInstanceOf(Date);
-                expect(createdRoom.userId.toString()).toBe(userId);
-                expect(typeof createdRoom.id).toBe("number");
+                expect(createdRoom.number).toBe(mockRoomData.number);
+                expect(createdRoom.type).toBe(mockRoomData.type);
+                expect(createdRoom.status).toBe(mockRoomData.status);
             });
             it("WITH ERROR", async () => {
                 await expect(Room_service_1.default.createRoom({})).rejects.toThrow();
@@ -129,7 +127,7 @@ describe("Room Booking Service", () => {
             it("WITH SUCCESS", async () => {
                 const room = await Room_service_1.default.getRoom(createdRoom._id.toString());
                 expect(room._id.toString()).toBe(createdRoom?._id.toString());
-                expect(room.userId.toString()).toBe(userId);
+                expect(room.number).toBe(createdRoom?.number);
             });
             it("WITH ERROR", async () => {
                 await expect(Room_service_1.default.getRoom("wecq22daaewccs")).rejects.toThrow();
@@ -146,8 +144,8 @@ describe("Room Booking Service", () => {
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });
-            it("WITH TIME FILTER", async () => {
-                const rooms = await Room_service_1.default.getRooms({ time: startTime.getTime() });
+            it("WITH TYPE FILTER", async () => {
+                const rooms = await Room_service_1.default.getRooms({ type: "single bed" });
                 expect(Array.isArray(rooms)).toBe(true);
                 expect(rooms.length).toBeGreaterThanOrEqual(1);
             });
@@ -159,23 +157,26 @@ describe("Room Booking Service", () => {
         });
         describe("Update Room", () => {
             it("WITH SUCCESS", async () => {
-                const newUserId = new mongoose_1.default.Types.ObjectId().toString();
                 const updatedRoom = await Room_service_1.default.updateRoom(createdRoom._id.toString(), {
-                    startTime: new Date(Date.now() + 2000000),
-                    endTime: new Date(Date.now() + 9200000),
-                    userId: newUserId,
+                    number: 303,
+                    type: "suite",
+                    capacity: 5,
+                    price: 500,
+                    status: "busy",
                 });
                 expect(updatedRoom._id.toString()).toBe(createdRoom?._id.toString());
-                expect(updatedRoom.userId.toString()).toBe(newUserId);
+                expect(updatedRoom.number).toBe(303);
+                expect(updatedRoom.type).toBe("suite");
             });
             it("WITH ERROR", async () => {
                 await expect(Room_service_1.default.updateRoom("dadcrfdsdfs", {})).rejects.toThrow();
             });
-            it("WITH ERROR BECAUSE OF INVALID USER ID", async () => {
+            it("WITH ERROR BECAUSE OF INVALID TYPE", async () => {
                 await expect(Room_service_1.default.updateRoom(createdRoom._id.toString(), {
-                    startTime: new Date(),
-                    endTime: new Date(Date.now() + 7200000),
-                    userId: "invalid-object-id",
+                    number: 404,
+                    type: "invalid-type",
+                    capacity: 3,
+                    price: 200,
                 })).rejects.toThrow();
             });
         });
@@ -201,21 +202,16 @@ describe("Room Booking Service", () => {
             it("Status 200 Success", async () => {
                 await (0, supertest_1.default)(index_1.express.app)
                     .post("/room")
-                    .send({
-                    startTime: startTime.toISOString(),
-                    endTime: endTime.toISOString(),
-                    userId,
-                })
+                    .send(mockRoomData)
                     .set("Accept", "application/json")
                     .expect("Content-Type", /json/)
                     .expect(200)
                     .then((response) => {
                     createdRoom = response.body.data;
                     expect(response.body.message).toBeTruthy();
-                    expect(response.body.data.startTime).toBeDefined();
-                    expect(response.body.data.endTime).toBeDefined();
-                    expect(response.body.data.userId).toBe(userId);
-                    expect(response.body.data.id).toBeGreaterThan(0);
+                    expect(response.body.data.number).toBe(mockRoomData.number);
+                    expect(response.body.data.type).toBe(mockRoomData.type);
+                    expect(response.body.data.status).toBe(mockRoomData.status);
                 });
             });
             it("Status 400 Error", async () => {
@@ -255,9 +251,9 @@ describe("Room Booking Service", () => {
                     expect(Array.isArray(response.body.data)).toBe(true);
                 });
             });
-            it("Status 200 with time filter", async () => {
+            it("Status 200 with type filter", async () => {
                 await (0, supertest_1.default)(index_1.express.app)
-                    .get("/room?time=" + startTime.getTime())
+                    .get("/room?type=single+bed")
                     .set("Accept", "application/json")
                     .expect("Content-Type", /json/)
                     .expect(200)
@@ -277,8 +273,7 @@ describe("Room Booking Service", () => {
                     .then((response) => {
                     expect(response.body.message).toBeTruthy();
                     expect(response.body.data._id).toBe(createdRoom?._id.toString());
-                    expect(response.body.data.userId).toBe(userId);
-                    expect(response.body.data.id).toBeGreaterThan(0);
+                    expect(response.body.data.number).toBe(createdRoom?.number);
                 });
             });
             it("Status 500 Error", async () => {
@@ -295,15 +290,14 @@ describe("Room Booking Service", () => {
         });
         describe("PATCH /room/:id", () => {
             it("Status 200 Success", async () => {
-                const newStartTime = new Date(Date.now() + 1000000);
-                const newEndTime = new Date(Date.now() + 8200000);
-                const newUserId = new mongoose_1.default.Types.ObjectId().toString();
                 await (0, supertest_1.default)(index_1.express.app)
                     .patch("/room/" + createdRoom._id)
                     .send({
-                    startTime: newStartTime.toISOString(),
-                    endTime: newEndTime.toISOString(),
-                    userId: newUserId,
+                    number: 505,
+                    type: "family",
+                    capacity: 4,
+                    price: 400,
+                    status: "busy",
                 })
                     .set("Accept", "application/json")
                     .expect("Content-Type", /json/)
@@ -311,16 +305,17 @@ describe("Room Booking Service", () => {
                     .then((response) => {
                     expect(response.body.message).toBeTruthy();
                     expect(response.body.data._id).toBe(createdRoom?._id.toString());
-                    expect(response.body.data.userId).toBe(newUserId);
+                    expect(response.body.data.number).toBe(505);
                 });
             });
-            it("Status 400 Error BECAUSE OF INVALID USER ID", async () => {
+            it("Status 400 Error BECAUSE OF INVALID TYPE", async () => {
                 await (0, supertest_1.default)(index_1.express.app)
                     .patch("/room/" + createdRoom._id)
                     .send({
-                    startTime: new Date().toISOString(),
-                    endTime: new Date().toISOString(),
-                    userId: "invalid-id",
+                    number: 606,
+                    type: "invalid-type",
+                    capacity: 3,
+                    price: 200,
                 })
                     .set("Accept", "application/json")
                     .expect("Content-Type", /json/)

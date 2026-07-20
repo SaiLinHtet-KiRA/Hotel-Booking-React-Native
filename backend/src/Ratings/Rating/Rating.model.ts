@@ -29,7 +29,7 @@ const DSchema = new Schema<RatingDocument>(
     rating: { type: Number, required: true, min: 0, max: 5 },
     feed_back: { type: String, maxlength: 100 },
   },
-  { versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
 const RatingModel = mongoose.connection

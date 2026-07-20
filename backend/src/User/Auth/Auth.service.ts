@@ -8,9 +8,9 @@ import { AuthorizeError } from "../../util/error/errors";
 class AuthService implements AuthServiceType {
   async checkPasswordIsCorrect(data: LoginType): Promise<string> {
     try {
-      const { name, password } = validateZod(LoginSchema, data);
+      const { email, password } = validateZod(LoginSchema, data);
 
-      const existingUser = await UserService.getUsers({ name });
+      const existingUser = await UserService.getUsers({ name: email });
 
       if (!existingUser.length) {
         throw new AuthorizeError("Invalid name or password");

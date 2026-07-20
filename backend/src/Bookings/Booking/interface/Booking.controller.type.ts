@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
-import { Rating, RatingDocument } from "../Booking.model";
+import { Booking, BookingDocument } from "../Booking.model";
 
-export default interface RatingControllerType {
-  getRating(
+export default interface BookingControllerType {
+  getBooking(
     req: Request<{ id: string }, null, null, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void>;
-  updateRating(
-    req: Request<{ id: string }, null, Rating, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+  updateBooking(
+    req: Request<{ id: string }, null, Booking, null>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void>;
-  createRating(
-    req: Request<{}, {}, Rating>,
-    res: Response<{ message: string; data: RatingDocument }>,
+  createBooking(
+    req: Request<{}, {}, Booking>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void>;
-  deleteRating(
+  deleteBooking(
     req: Request<{ id: string }, null, null, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void>;
 }

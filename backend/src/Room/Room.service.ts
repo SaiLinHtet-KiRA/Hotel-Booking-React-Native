@@ -32,7 +32,7 @@ class RoomService implements RoomServiceType {
       throw error;
     }
   }
-  async updateRoom(id: string, data: Room): Promise<RoomDocument> {
+  async updateRoom(id: string, data: Partial<Room>): Promise<RoomDocument> {
     try {
       try {
         const RoomData = validateZod(RoomSchema, data);

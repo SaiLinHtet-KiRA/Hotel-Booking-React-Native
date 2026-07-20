@@ -7,8 +7,8 @@ import { express } from "../../../server/index";
 import request from "supertest";
 
 const mockRatingData: Rating = {
-  userId: new mongoose.Types.ObjectId(),
-  RatingId: new mongoose.Types.ObjectId(),
+  user: new mongoose.Types.ObjectId(),
+  RatingsId: new mongoose.Types.ObjectId(),
   rating: 4,
   feed_back: "Great room!",
 };
@@ -33,8 +33,8 @@ describe("Rating Service", () => {
         expect(createdRating).not.toBeNull();
         expect(createdRating._id).not.toBeNull();
         expect(createdRating).toMatchObject({
-          userId: mockRatingData.userId,
-          RatingId: mockRatingData.RatingId,
+          user: mockRatingData.user,
+          RatingsId: mockRatingData.RatingsId,
           rating: mockRatingData.rating,
           feed_back: mockRatingData.feed_back,
         });
@@ -51,8 +51,8 @@ describe("Rating Service", () => {
 
         expect(rating).toMatchObject({
           _id: createdRating?._id,
-          userId: createdRating?.userId,
-          RatingId: createdRating?.RatingId,
+          user: createdRating?.user,
+          RatingsId: createdRating?.RatingsId,
           rating: createdRating?.rating,
           feed_back: createdRating?.feed_back,
         });
@@ -66,8 +66,8 @@ describe("Rating Service", () => {
     describe("Update Rating", () => {
       it("WITH SUCCESS", async () => {
         const updatedData: Rating = {
-          userId: new mongoose.Types.ObjectId(),
-          RatingId: mockRatingData.RatingId,
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: mockRatingData.RatingsId,
           rating: 5,
           feed_back: "Excellent!",
         };
@@ -125,8 +125,8 @@ describe("Rating Service", () => {
         expect(createdRating._id).not.toBeNull();
 
         expect(createdRating).toMatchObject({
-          userId: mockRatingData.userId,
-          RatingId: mockRatingData.RatingId,
+          user: mockRatingData.user,
+          RatingsId: mockRatingData.RatingsId,
           rating: mockRatingData.rating,
           feed_back: mockRatingData.feed_back,
         });
@@ -142,8 +142,8 @@ describe("Rating Service", () => {
         const rating = await RatingService.getRating(createdRating!._id.toString());
         expect(rating).toMatchObject({
           _id: createdRating?._id,
-          userId: createdRating?.userId,
-          RatingId: createdRating?.RatingId,
+          user: createdRating?.user,
+          RatingsId: createdRating?.RatingsId,
           rating: createdRating?.rating,
           feed_back: createdRating?.feed_back,
         });
@@ -157,8 +157,8 @@ describe("Rating Service", () => {
     describe("Update Rating", () => {
       it("WITH SUCCESS", async () => {
         const updatedData: Rating = {
-          userId: new mongoose.Types.ObjectId(),
-          RatingId: mockRatingData.RatingId,
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: mockRatingData.RatingsId,
           rating: 5,
           feed_back: "Excellent!",
         };
@@ -182,8 +182,8 @@ describe("Rating Service", () => {
 
       it("WITH ERROR BECAUSE OF RATING IS GREATER THAN 5", async () => {
         const invalidData: Rating = {
-          userId: new mongoose.Types.ObjectId(),
-          RatingId: new mongoose.Types.ObjectId(),
+          user: new mongoose.Types.ObjectId(),
+          RatingsId: new mongoose.Types.ObjectId(),
           rating: 6,
           feed_back: "Too high!",
         };
@@ -225,8 +225,8 @@ describe("Rating Service", () => {
         await request(express.app)
           .post("/rating")
           .send({
-            userId: mockRatingData.userId.toString(),
-            RatingId: mockRatingData.RatingId.toString(),
+            user: mockRatingData.user.toString(),
+            RatingsId: mockRatingData.RatingsId.toString(),
             rating: mockRatingData.rating,
             feed_back: mockRatingData.feed_back,
           })
@@ -290,8 +290,8 @@ describe("Rating Service", () => {
     describe("PATCH /rating/:id", () => {
       it("Status 200 Success", async () => {
         const updatedData = {
-          userId: new mongoose.Types.ObjectId().toString(),
-          RatingId: mockRatingData.RatingId.toString(),
+          user: new mongoose.Types.ObjectId().toString(),
+          RatingsId: mockRatingData.RatingsId.toString(),
           rating: 3,
           feed_back: "Updated feedback",
         };
@@ -315,8 +315,8 @@ describe("Rating Service", () => {
         await request(express.app)
           .patch("/rating/" + createdRating?._id)
           .send({
-            userId: new mongoose.Types.ObjectId().toString(),
-            RatingId: mockRatingData.RatingId.toString(),
+            user: new mongoose.Types.ObjectId().toString(),
+            RatingsId: mockRatingData.RatingsId.toString(),
             rating: 6,
             feed_back: "Too high",
           })

@@ -1,199 +1,210 @@
 import mongoose from "mongoose";
 import { dbConnect, dbDisconnect } from "../../util/mongoDBConfigTest";
-import { Ratings, RatingsDocument } from "../Ratings.model";
-import RatingsRepo from "../Ratings.repo";
-import RatingsService from "../Ratings.service";
+import { Bookings, BookingsDocument } from "../Bookings.model";
+import BookingsRepo from "../Bookings.repo";
+import BookingsService from "../Bookings.service";
 import { express } from "../../server/index";
 import request from "supertest";
 
-let createdRatings: RatingsDocument | null = null;
+let createdBookings: BookingsDocument | null = null;
 
-describe("Ratings Service", () => {
-  describe("Ratings Repository", () => {
+describe("Bookings Service", () => {
+  describe("Bookings Repository", () => {
     beforeAll(async () => {
       await dbConnect();
     });
 
     afterAll(async () => {
       await dbDisconnect();
-      createdRatings = null;
+      createdBookings = null;
     });
 
-    describe("Create Ratings", () => {
+    describe("Create Bookings", () => {
       it("WITH SUCCESS", async () => {
-        createdRatings = await RatingsRepo.create({});
+        createdBookings = await BookingsRepo.create({ bookings: [] });
 
-        expect(createdRatings).not.toBeNull();
-        expect(createdRatings._id).not.toBeNull();
-        expect(createdRatings.average).toBe(0);
-        expect(createdRatings.ratings).toEqual([]);
+        expect(createdBookings).not.toBeNull();
+        expect(createdBookings._id).not.toBeNull();
+        expect(createdBookings.bookings).toEqual([]);
       });
 
       it("WITH ERROR", async () => {
-        await expect(RatingsRepo.create({} as Ratings)).rejects.toThrow();
+        await expect(BookingsRepo.create({} as Bookings)).rejects.toThrow();
       });
     });
 
-    describe("Get Ratings", () => {
+    describe("Get Bookings", () => {
       it("WITH SUCCESS", async () => {
-        const ratings = await RatingsRepo.getByID(createdRatings!._id.toString());
+        const bookings = await BookingsRepo.getByID(
+          createdBookings!._id.toString(),
+        );
 
-        expect(ratings).toMatchObject({
-          _id: createdRatings?._id,
-          average: createdRatings?.average,
+        expect(bookings).toMatchObject({
+          _id: createdBookings?._id,
         });
-        expect(ratings.ratings).toEqual([]);
-      });
-
-      it("WITH ERROR", async () => {
-        await expect(RatingsRepo.getByID("wecq22daaewccs")).rejects.toThrow();
-      });
-    });
-
-    describe("Update Ratings", () => {
-      it("WITH SUCCESS", async () => {
-        const ratingId = new mongoose.Types.ObjectId();
-        const updatedRatings = await RatingsRepo.update(
-          createdRatings!._id.toString(),
-          { ratings: [ratingId] },
-        );
-
-        expect(updatedRatings._id.toString()).toBe(createdRatings?._id.toString());
-        expect(updatedRatings.ratings.length).toBe(1);
+        expect(bookings.bookings).toEqual([]);
       });
 
       it("WITH ERROR", async () => {
         await expect(
-          RatingsRepo.update("dadcrfdsdfs", {} as Ratings),
+          BookingsRepo.getByID("wecq22daaewccs"),
         ).rejects.toThrow();
       });
     });
 
-    describe("Delete Ratings", () => {
+    describe("Update Bookings", () => {
       it("WITH SUCCESS", async () => {
-        const deletedRatings = await RatingsRepo.delete(
-          createdRatings!._id.toString(),
+        const bookingId = new mongoose.Types.ObjectId();
+        const updatedBookings = await BookingsRepo.update(
+          createdBookings!._id.toString(),
+          { bookings: [bookingId] },
         );
 
-        expect(deletedRatings._id.toString()).toBe(createdRatings?._id.toString());
+        expect(updatedBookings._id.toString()).toBe(
+          createdBookings?._id.toString(),
+        );
+        expect(updatedBookings.bookings.length).toBe(1);
       });
 
       it("WITH ERROR", async () => {
-        await expect(RatingsRepo.delete("dadcrfdsdfs")).rejects.toThrow();
+        await expect(
+          BookingsRepo.update("dadcrfdsdfs", {} as Bookings),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("Delete Bookings", () => {
+      it("WITH SUCCESS", async () => {
+        const deletedBookings = await BookingsRepo.delete(
+          createdBookings!._id.toString(),
+        );
+
+        expect(deletedBookings._id.toString()).toBe(
+          createdBookings?._id.toString(),
+        );
+      });
+
+      it("WITH ERROR", async () => {
+        await expect(
+          BookingsRepo.delete("dadcrfdsdfs"),
+        ).rejects.toThrow();
       });
     });
   });
 
-  describe("Ratings Service", () => {
+  describe("Bookings Service", () => {
     beforeAll(async () => {
       await dbConnect();
     });
 
     afterAll(async () => {
       await dbDisconnect();
-      createdRatings = null;
+      createdBookings = null;
     });
 
-    describe("Create Ratings", () => {
+    describe("Create Bookings", () => {
       it("WITH SUCCESS", async () => {
-        createdRatings = await RatingsService.createRatings({});
-        expect(createdRatings).not.toBeNull();
-        expect(createdRatings._id).not.toBeNull();
-        expect(createdRatings.average).toBe(0);
-        expect(createdRatings.ratings).toEqual([]);
-      });
-
-      it("WITH ERROR", async () => {
-        await expect(RatingsService.createRatings({} as Ratings)).rejects.toThrow();
-      });
-    });
-
-    describe("Get Ratings", () => {
-      it("WITH SUCCESS", async () => {
-        const ratings = await RatingsService.getRating(createdRatings!._id.toString());
-        expect(ratings._id.toString()).toBe(createdRatings?._id.toString());
-        expect(ratings.average).toBe(0);
-      });
-
-      it("WITH ERROR", async () => {
-        await expect(RatingsService.getRating("wecq22daaewccs")).rejects.toThrow();
-      });
-    });
-
-    describe("Calculate Average Rating", () => {
-      it("WITH SUCCESS", async () => {
-        const average = await RatingsService.calculateAverageRating(
-          createdRatings!._id.toString(),
-        );
-        expect(average).toBe(0);
-      });
-    });
-
-    describe("Update Ratings", () => {
-      it("WITH SUCCESS", async () => {
-        const ratingId = new mongoose.Types.ObjectId();
-        const updatedRatings = await RatingsService.updateRatings(
-          createdRatings!._id.toString(),
-          { ratings: [ratingId] },
-        );
-
-        expect(updatedRatings._id.toString()).toBe(createdRatings?._id.toString());
-        expect(updatedRatings.ratings.length).toBe(1);
+        createdBookings = await BookingsService.createBookings({ bookings: [] });
+        expect(createdBookings).not.toBeNull();
+        expect(createdBookings._id).not.toBeNull();
+        expect(createdBookings.bookings).toEqual([]);
       });
 
       it("WITH ERROR", async () => {
         await expect(
-          RatingsService.updateRatings("dadcrfdsdfs", {} as Ratings),
+          BookingsService.createBookings({} as Bookings),
         ).rejects.toThrow();
       });
     });
 
-    describe("Delete Ratings", () => {
+    describe("Get Bookings", () => {
       it("WITH SUCCESS", async () => {
-        const deletedRatings = await RatingsService.deleteRatings(
-          createdRatings!._id.toString(),
+        const bookings = await BookingsService.getBooking(
+          createdBookings!._id.toString(),
         );
-
-        expect(deletedRatings._id.toString()).toBe(createdRatings?._id.toString());
+        expect(bookings._id.toString()).toBe(createdBookings?._id.toString());
+        expect(bookings.bookings).toEqual([]);
       });
 
       it("WITH ERROR", async () => {
-        await expect(RatingsService.deleteRatings("dadcrfdsdfs")).rejects.toThrow();
+        await expect(
+          BookingsService.getBooking("wecq22daaewccs"),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("Update Bookings", () => {
+      it("WITH SUCCESS", async () => {
+        const bookingId = new mongoose.Types.ObjectId();
+        const updatedBookings = await BookingsService.updateBookings(
+          createdBookings!._id.toString(),
+          { bookings: [bookingId] },
+        );
+
+        expect(updatedBookings._id.toString()).toBe(
+          createdBookings?._id.toString(),
+        );
+        expect(updatedBookings.bookings.length).toBe(1);
+      });
+
+      it("WITH ERROR", async () => {
+        await expect(
+          BookingsService.updateBookings("dadcrfdsdfs", {} as Bookings),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("Delete Bookings", () => {
+      it("WITH SUCCESS", async () => {
+        const deletedBookings = await BookingsService.deleteBookings(
+          createdBookings!._id.toString(),
+        );
+
+        expect(deletedBookings._id.toString()).toBe(
+          createdBookings?._id.toString(),
+        );
+      });
+
+      it("WITH ERROR", async () => {
+        await expect(
+          BookingsService.deleteBookings("dadcrfdsdfs"),
+        ).rejects.toThrow();
       });
     });
   });
 
-  describe("Ratings API", () => {
+  describe("Bookings API", () => {
     beforeAll(async () => {
       await dbConnect();
     });
 
     afterAll(async () => {
       await dbDisconnect();
-      createdRatings = null;
+      createdBookings = null;
     });
 
-    describe("GET /ratings/:id", () => {
+    describe("GET /bookings/:id", () => {
       beforeAll(async () => {
-        createdRatings = await RatingsService.createRatings({});
+        createdBookings = await BookingsService.createBookings({ bookings: [] });
       });
 
       it("Status 200 Success", async () => {
         await request(express.app)
-          .get("/ratings/" + createdRatings!._id)
+          .get("/bookings/" + createdBookings!._id)
           .set("Accept", "application/json")
           .expect("Content-Type", /json/)
           .expect(200)
           .then((response) => {
             expect(response.body.message).toBeTruthy();
-            expect(response.body.data._id).toBe(createdRatings?._id.toString());
-            expect(response.body.data.average).toBe(0);
+            expect(response.body.data._id).toBe(
+              createdBookings?._id.toString(),
+            );
           });
       });
 
       it("Status 500 Error", async () => {
         await request(express.app)
-          .get("/ratings/msfkmsdfsf")
+          .get("/bookings/msfkmsdfsf")
           .set("Accept", "application/json")
           .expect("Content-Type", /json/)
           .expect(500)

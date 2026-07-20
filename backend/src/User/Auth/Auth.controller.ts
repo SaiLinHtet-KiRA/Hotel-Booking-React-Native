@@ -40,7 +40,6 @@ class AuthController implements AuthControllerType {
         _id: string;
         name: string;
         role: string;
-        records: unknown[];
         id: number;
       };
     }>,
@@ -58,7 +57,7 @@ class AuthController implements AuthControllerType {
 
       res.json({
         message: "Logged In",
-        data: { _id: String(_id), name, role, id },
+        data: { _id: String(_id), name, role: role!, id },
       });
     } catch (error) {
       throw error;

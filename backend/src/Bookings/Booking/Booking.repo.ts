@@ -1,56 +1,56 @@
 import { NotFoundError } from "../../util/error/errors";
-import RatingModel, { RatingDocument, Rating } from "./Booking.model";
-import RatingRepoType from "./interface/Rating.repo.type";
+import BookingModel, { BookingDocument, Booking } from "./Booking.model";
+import BookingRepoType from "./interface/Booking.repo.type";
 
-class RatingRepo implements RatingRepoType {
-  async get(): Promise<RatingDocument[]> {
+class BookingRepo implements BookingRepoType {
+  async get(): Promise<BookingDocument[]> {
     try {
-      const Ratings = await RatingModel.find();
-      if (Ratings) return Ratings;
-      throw new Error(`Something was wrong in RatingRepo.get`);
+      const Bookings = await BookingModel.find();
+      if (Bookings) return Bookings;
+      throw new Error(`Something was wrong in BookingRepo.get`);
     } catch (error) {
       throw error;
     }
   }
-  async getByID(id: string): Promise<RatingDocument> {
+  async getByID(id: string): Promise<BookingDocument> {
     try {
-      const Rating = await RatingModel.findById(id);
-      if (Rating) return Rating;
+      const Booking = await BookingModel.findById(id);
+      if (Booking) return Booking;
       throw new NotFoundError(`${id} was not found in Rate Database!!!`);
     } catch (error) {
       throw error;
     }
   }
-  async create(data: Rating): Promise<RatingDocument> {
+  async create(data: Booking): Promise<BookingDocument> {
     try {
-      const newRating = new RatingModel(data);
-      return await newRating.save();
+      const newBooking = new BookingModel(data);
+      return await newBooking.save();
     } catch (error) {
       throw error;
     }
   }
-  async update(id: string, data: Rating): Promise<RatingDocument> {
+  async update(id: string, data: Booking): Promise<BookingDocument> {
     try {
-      const Rating = await RatingModel.findByIdAndUpdate(id, data, {
+      const Booking = await BookingModel.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,
       });
 
-      if (Rating) return Rating;
-      throw new NotFoundError(`${id} was not found in Rating Database!!!`);
+      if (Booking) return Booking;
+      throw new NotFoundError(`${id} was not found in Booking Database!!!`);
     } catch (error) {
       throw error;
     }
   }
-  async delete(id: string): Promise<RatingDocument> {
+  async delete(id: string): Promise<BookingDocument> {
     try {
-      const Rating = await RatingModel.findByIdAndDelete(id);
-      if (Rating) return Rating;
-      throw new NotFoundError(`${id} was not found in Rating Database!!!`);
+      const Booking = await BookingModel.findByIdAndDelete(id);
+      if (Booking) return Booking;
+      throw new NotFoundError(`${id} was not found in Booking Database!!!`);
     } catch (error) {
       throw error;
     }
   }
 }
 
-export default new RatingRepo();
+export default new BookingRepo();

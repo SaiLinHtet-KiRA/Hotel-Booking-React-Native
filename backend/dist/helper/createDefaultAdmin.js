@@ -16,6 +16,7 @@ async function createDefaultAdmin() {
         }
         await User_service_1.default.createUser({
             name: config_1.ADMIN_NAME,
+            email: config_1.ADMIN_NAME,
             password: config_1.ADMIN_PASSWORD,
             role: "admin",
         });

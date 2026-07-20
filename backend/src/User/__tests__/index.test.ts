@@ -8,6 +8,7 @@ import request from "supertest";
 
 const mockUserData: User = {
   name: "testuser",
+  email: "test@test.com",
   password: "password123",
   role: "user",
 };

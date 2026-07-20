@@ -10,6 +10,16 @@ export const RoomSchema = z.object({
   type: z.enum(["single bed", "double bed", "family", "deluxe", "suite"], {
     error: "Type field is missing",
   }),
+  photo: z
+    .array(
+      z
+        .string({ message: "Each photo must be a string." })
+        .url({ message: "Each photo must be a valid URL." }),
+      {
+        message: "Photo is required.",
+      },
+    )
+    .min(1, { message: "At least one photo is required." }),
   capacity: z
     .number({ error: "Capacity field is missing" })
     .min(1, { error: "Must start from 1" })
@@ -48,6 +58,7 @@ const DSchema = new Schema<RoomDocument>(
     ratings: {
       type: Schema.ObjectId,
     },
+    photo: { type: [String], default: [] },
   },
   { versionKey: false, timestamps: true },
 );

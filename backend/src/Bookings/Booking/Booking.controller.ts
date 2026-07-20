@@ -1,70 +1,70 @@
 import { Request, Response } from "express";
-import { Rating, RatingDocument } from "./Booking.model";
-import RatingControllerType from "./interface/Rating.controller.type";
-import RatingService from "./Booking.service";
+import { Booking, BookingDocument } from "./Booking.model";
+import BookingControllerType from "./interface/Booking.controller.type";
+import BookingService from "./Booking.service";
 
-class RatingController implements RatingControllerType {
-  async getRating(
+class BookingController implements BookingControllerType {
+  async getBooking(
     req: Request<{ id: string }, null, null, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void> {
     try {
       const { id } = req.params;
-      const Rating = await RatingService.getRating(id);
+      const Booking = await BookingService.getBooking(id);
 
       res
         .status(200)
-        .json({ message: "Rating retrieved successfully", data: Rating });
+        .json({ message: "Booking retrieved successfully", data: Booking });
     } catch (error) {
       throw error;
     }
   }
-  async updateRating(
-    req: Request<{ id: string }, null, Rating, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+  async updateBooking(
+    req: Request<{ id: string }, null, Booking, null>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void> {
     try {
       const { id } = req.params;
       const body = req.body;
-      const Rating = await RatingService.updateRating(id, body);
+      const Booking = await BookingService.updateBooking(id, body);
 
       res
         .status(200)
-        .json({ message: "Rating retrieved successfully", data: Rating });
+        .json({ message: "Booking retrieved successfully", data: Booking });
     } catch (error) {
       throw error;
     }
   }
-  async createRating(
-    req: Request<{}, {}, Rating>,
-    res: Response<{ message: string; data: RatingDocument }>,
+  async createBooking(
+    req: Request<{}, {}, Booking>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void> {
     try {
       const body = req.body;
-      const Rating = await RatingService.createRating(body);
+      const Booking = await BookingService.createBooking(body);
 
       res
         .status(200)
-        .json({ message: "Rating retrieved successfully", data: Rating });
+        .json({ message: "Booking retrieved successfully", data: Booking });
     } catch (error) {
       throw error;
     }
   }
-  async deleteRating(
+  async deleteBooking(
     req: Request<{ id: string }, null, null, null>,
-    res: Response<{ message: string; data: RatingDocument }>,
+    res: Response<{ message: string; data: BookingDocument }>,
   ): Promise<void> {
     try {
       const { id } = req.params;
-      const Rating = await RatingService.deleteRating(id);
+      const Booking = await BookingService.deleteBooking(id);
 
       res
         .status(200)
-        .json({ message: "Rating retrieved successfully", data: Rating });
+        .json({ message: "Booking retrieved successfully", data: Booking });
     } catch (error) {
       throw error;
     }
   }
 }
 
-export default new RatingController();
+export default new BookingController();

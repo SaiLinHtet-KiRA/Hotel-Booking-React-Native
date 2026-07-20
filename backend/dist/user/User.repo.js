@@ -11,7 +11,7 @@ class UserRepo {
         try {
             const Users = await User_model_1.default.find(name
                 ? { name }
-                : role == "admin" || role == "owner" || role == "user"
+                : role == "admin" || role == "user"
                     ? {
                         role,
                     }

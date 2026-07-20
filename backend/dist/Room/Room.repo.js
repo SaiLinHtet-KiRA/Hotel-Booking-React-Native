@@ -7,20 +7,11 @@ const User_model_1 = __importDefault(require("../User/User.model"));
 const errors_1 = require("../util/error/errors");
 const Room_model_1 = __importDefault(require("./Room.model"));
 class RoomRepo {
-    async get({ limit, page, time }) {
+    async get({ limit, page, type }) {
         try {
-            const Rooms = await Room_model_1.default.find(time
+            const Rooms = await Room_model_1.default.find(type
                 ? {
-                    $or: [
-                        {
-                            startTime: { $gte: new Date(Number(time)) },
-                            endTime: { $lte: new Date(Number(time)) },
-                        },
-                        {
-                            endTime: { $gte: new Date(Number(time)) },
-                            startTime: { $lte: new Date(Number(time)) },
-                        },
-                    ],
+                    type: type,
                 }
                 : {}, {}, page && limit ? { skip: page * limit, limit } : {})
                 .populate({

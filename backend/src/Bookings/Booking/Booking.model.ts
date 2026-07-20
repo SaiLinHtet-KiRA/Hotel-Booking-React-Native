@@ -1,39 +1,54 @@
 import mongoose, { Schema, Types, HydratedDocument } from "mongoose";
 import { z } from "zod";
+import RoomService from "../../Room/Room.service";
+import { DateToNumber } from "../../helper/DateToNumber";
 
-export const RatingSchema = z.object({
+export const BookingSchema = z.object({
   user: z.any().refine((value) => Types.ObjectId.isValid(value), {
     message: "Invalid ObjectId",
   }),
-  RatingsId: z.any().refine((value) => Types.ObjectId.isValid(value), {
+  room: z.any().refine((value) => Types.ObjectId.isValid(value), {
     message: "Invalid ObjectId",
   }),
-  rating: z
-    .number({ error: "Rating is required." })
-    .min(0, { error: "Rating must be at least 0." })
-    .max(5, { error: "Rating cannot exceed 5." }),
-  feed_back: z
-    .string()
-    .max(100, { error: "Feedback must be at most 100 characters." })
-    .optional(),
+
+  bookings: z.any().refine((value) => Types.ObjectId.isValid(value), {
+    message: "Invalid ObjectId",
+  }),
+  startDate: z.coerce.date({ error: "Start date is required." }),
+  endDate: z.coerce.date({ error: "End date is required." }),
 });
 
-export type Rating = z.infer<typeof RatingSchema>;
+export type Booking = z.infer<typeof BookingSchema>;
 
-export type RatingDocument = HydratedDocument<Rating>;
+export type BookingDocument = HydratedDocument<
+  Booking & {
+    price: number;
+  }
+>;
 
-const DSchema = new Schema<RatingDocument>(
+const DSchema = new Schema<BookingDocument>(
   {
     user: { type: Schema.Types.ObjectId, required: true },
-    RatingsId: { type: Schema.Types.ObjectId, required: true },
-    rating: { type: Number, required: true, min: 0, max: 5 },
-    feed_back: { type: String, maxlength: 100 },
+    room: { type: Schema.Types.ObjectId, required: true },
+    bookings: { type: Schema.Types.ObjectId, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
   },
-  { versionKey: false },
+  { versionKey: false, timestamps: true },
 );
 
-const RatingModel = mongoose.connection
-  .useDb("Rating")
-  .model<RatingDocument>("Rating", DSchema);
+DSchema.pre("save", async function () {
+  if (this.isNew) {
+    const room = await RoomService.updateRoom(this.room, { status: "busy" });
+    this.price =
+      room.price *
+      ((DateToNumber(this.endDate) - DateToNumber(this.startDate)) /
+        (1000 * 60 * 60 * 24));
+  }
+});
 
-export default RatingModel;
+const BookingModel = mongoose.connection
+  .useDb("Booking")
+  .model<BookingDocument>("Booking", DSchema);
+
+export default BookingModel;
