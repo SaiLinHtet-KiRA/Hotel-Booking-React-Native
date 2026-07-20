@@ -13,7 +13,7 @@ export default class ExpressServer {
     this.app.set("trust proxy", 1);
     this.app.use(
       cors({
-        origin: [process.env.FRONTEND_URL!],
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
         credentials: true,
       }),
     );
@@ -26,8 +26,8 @@ export default class ExpressServer {
         cookie: {
           httpOnly: true,
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          secure: true,
-          sameSite: "none",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         },
       }),
     );

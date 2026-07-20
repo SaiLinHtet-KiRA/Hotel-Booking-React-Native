@@ -12,10 +12,7 @@ req, _res, next) {
         if (!req.session.userId) {
             throw new errors_1.AuthorizeError("Not logged in");
         }
-        const { id } = req.params;
         const user = await User_service_1.default.getUser(req.session.userId);
-        if (!id)
-            throw Error("id is missing!!");
         if (user.role !== "admin") {
             throw new errors_1.AuthorizeError("Admin access required");
         }

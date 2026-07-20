@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const errors_1 = require("../util/error/errors");
 const User_model_1 = __importDefault(require("./User.model"));
 class UserRepo {
-    async get({ limit, page, role, name, }) {
+    async get({ limit, page, role, email, }) {
         try {
-            const Users = await User_model_1.default.find(name
-                ? { name }
+            const Users = await User_model_1.default.find(email
+                ? { email }
                 : role == "admin" || role == "user"
                     ? {
                         role,

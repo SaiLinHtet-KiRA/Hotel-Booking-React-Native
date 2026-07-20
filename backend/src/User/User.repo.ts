@@ -9,12 +9,12 @@ class UserRepo implements UserRepoType {
     limit,
     page,
     role,
-    name,
+    email,
   }: PaginationQuery): Promise<UserDocument[]> {
     try {
       const Users = await UserModel.find(
-        name
-          ? { name }
+        email
+          ? { email }
           : role == "admin" || role == "user"
             ? {
                 role,

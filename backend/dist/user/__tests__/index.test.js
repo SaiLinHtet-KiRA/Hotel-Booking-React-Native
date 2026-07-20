@@ -68,7 +68,7 @@ describe("User Service", () => {
                 expect(users.length).toBeGreaterThanOrEqual(1);
             });
             it("WITH NAME FILTER", async () => {
-                const users = await User_repo_1.default.get({ name: createdUser?.name });
+                const users = await User_repo_1.default.get({ email: createdUser?.email });
                 expect(Array.isArray(users)).toBe(true);
                 expect(users.length).toBeGreaterThanOrEqual(1);
             });

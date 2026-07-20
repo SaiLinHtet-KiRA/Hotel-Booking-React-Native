@@ -10,10 +10,10 @@ class AuthService implements AuthServiceType {
     try {
       const { email, password } = validateZod(LoginSchema, data);
 
-      const existingUser = await UserService.getUsers({ name: email });
+      const existingUser = await UserService.getUsers({ email: email });
 
       if (!existingUser.length) {
-        throw new AuthorizeError("Invalid name or password");
+        throw new AuthorizeError("Invalid email or password");
       }
 
       const isMatch = await comparePassword(
@@ -22,7 +22,7 @@ class AuthService implements AuthServiceType {
       );
 
       if (!isMatch) {
-        throw new AuthorizeError("Invalid name or password");
+        throw new AuthorizeError("Invalid email or password");
       }
 
       return existingUser[0]._id.toString();

@@ -53,6 +53,11 @@ exports.BookingSchema = zod_1.z.object({
     }),
     startDate: zod_1.z.coerce.date({ error: "Start date is required." }),
     endDate: zod_1.z.coerce.date({ error: "End date is required." }),
+    status: zod_1.z
+        .enum(["pending", "confirmed", "cancelled"], {
+        error: "Status must be pending, confirmed, or cancelled",
+    })
+        .default("pending"),
 });
 const DSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.Schema.Types.ObjectId, required: true },
@@ -60,6 +65,11 @@ const DSchema = new mongoose_1.Schema({
     bookings: { type: mongoose_1.Schema.Types.ObjectId, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    status: {
+        type: String,
+        enum: ["pending", "confirmed", "cancelled"],
+        default: "pending",
+    },
 }, { versionKey: false, timestamps: true });
 DSchema.pre("save", async function () {
     if (this.isNew) {

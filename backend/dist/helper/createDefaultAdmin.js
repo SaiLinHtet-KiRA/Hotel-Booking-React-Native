@@ -9,14 +9,14 @@ const User_service_1 = __importDefault(require("../User/User.service"));
 async function createDefaultAdmin() {
     try {
         const existingDefaultAdmin = await User_service_1.default.getUsers({
-            name: config_1.ADMIN_NAME,
+            role: "admin",
         });
         if (existingDefaultAdmin.length) {
             return;
         }
         await User_service_1.default.createUser({
             name: config_1.ADMIN_NAME,
-            email: config_1.ADMIN_NAME,
+            email: config_1.ADMIN_EMAIL,
             password: config_1.ADMIN_PASSWORD,
             role: "admin",
         });

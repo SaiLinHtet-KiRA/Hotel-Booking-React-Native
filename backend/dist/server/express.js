@@ -15,7 +15,7 @@ class ExpressServer {
         this.app = (0, express_1.default)();
         this.app.set("trust proxy", 1);
         this.app.use((0, cors_1.default)({
-            origin: [process.env.FRONTEND_URL],
+            origin: process.env.FRONTEND_URL || "http://localhost:3000",
             credentials: true,
         }));
         this.app.use((0, express_session_1.default)({
@@ -25,8 +25,8 @@ class ExpressServer {
             cookie: {
                 httpOnly: true,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
-                secure: true,
-                sameSite: "none",
+                secure: process.env.NODE_ENV === "production",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             },
         }));
         this.app.use(express_1.default.json());

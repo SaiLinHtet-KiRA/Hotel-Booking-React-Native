@@ -30,11 +30,15 @@ const DSchema = new Schema<UserDocument>(
       type: Number,
       default: 0,
     },
-
+    email: {
+      type: String,
+      unique: [true, "This email is already existed"],
+      required: [true, "Email field is missing"],
+    },
     name: {
       type: String,
       unique: [true, "This name is already existed"],
-      required: [true, "Value field is missing"],
+      required: [true, "Name field is missing"],
     },
     password: {
       type: String,

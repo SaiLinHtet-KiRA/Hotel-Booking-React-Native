@@ -1,10 +1,10 @@
-import { ADMIN_NAME, ADMIN_PASSWORD } from "../config/config";
+import { ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD } from "../config/config";
 import UserService from "../User/User.service";
 
 export async function createDefaultAdmin() {
   try {
     const existingDefaultAdmin = await UserService.getUsers({
-      name: ADMIN_NAME,
+      role: "admin",
     });
 
     if (existingDefaultAdmin.length) {
@@ -12,7 +12,7 @@ export async function createDefaultAdmin() {
     }
     await UserService.createUser({
       name: ADMIN_NAME,
-      email: ADMIN_NAME,
+      email: ADMIN_EMAIL,
       password: ADMIN_PASSWORD,
       role: "admin",
     });

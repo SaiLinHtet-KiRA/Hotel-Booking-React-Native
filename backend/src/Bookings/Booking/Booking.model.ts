@@ -16,6 +16,11 @@ export const BookingSchema = z.object({
   }),
   startDate: z.coerce.date({ error: "Start date is required." }),
   endDate: z.coerce.date({ error: "End date is required." }),
+  status: z
+    .enum(["pending", "confirmed", "cancelled"], {
+      error: "Status must be pending, confirmed, or cancelled",
+    })
+    .default("pending"),
 });
 
 export type Booking = z.infer<typeof BookingSchema>;
@@ -33,6 +38,11 @@ const DSchema = new Schema<BookingDocument>(
     bookings: { type: Schema.Types.ObjectId, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    status: {
+      type: String,
+      enum: ["pending", "confirmed", "cancelled"],
+      default: "pending",
+    },
   },
   { versionKey: false, timestamps: true },
 );

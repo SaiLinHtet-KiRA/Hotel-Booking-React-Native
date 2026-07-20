@@ -85,7 +85,7 @@ describe("User Service", () => {
       });
 
       it("WITH NAME FILTER", async () => {
-        const users = await UserRepo.get({ name: createdUser?.name });
+        const users = await UserRepo.get({ email: createdUser?.email });
 
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThanOrEqual(1);

@@ -12,10 +12,8 @@ async function CheckAdmin(
     if (!req.session.userId) {
       throw new AuthorizeError("Not logged in");
     }
-    const { id } = req.params;
-    const user = await UserService.getUser(req.session.userId);
 
-    if (!id) throw Error("id is missing!!");
+    const user = await UserService.getUser(req.session.userId);
 
     if (user.role !== "admin") {
       throw new AuthorizeError("Admin access required");

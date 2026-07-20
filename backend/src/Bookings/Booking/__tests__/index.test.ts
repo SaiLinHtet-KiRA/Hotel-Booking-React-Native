@@ -12,6 +12,7 @@ const mockBookingData: Booking = {
   bookings: new mongoose.Types.ObjectId(),
   startDate: new Date(),
   endDate: new Date(Date.now() + 86400000),
+  status: "pending",
 };
 
 let createdBooking: BookingDocument | null = null;
@@ -149,6 +150,7 @@ describe("Booking Service", () => {
           bookings: new mongoose.Types.ObjectId(),
           startDate: new Date(Date.now() + 86400000),
           endDate: new Date(),
+          status: "pending",
         };
         await expect(
           BookingService.createBooking(invalidData),
