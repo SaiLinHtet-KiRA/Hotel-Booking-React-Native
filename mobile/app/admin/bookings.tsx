@@ -65,6 +65,7 @@ export default function BookingsScreen() {
         data={bookings}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews={false}
         contentContainerStyle={styles.list}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.3}

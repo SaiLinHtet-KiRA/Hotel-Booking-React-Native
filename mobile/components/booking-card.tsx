@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { StyleSheet, View, Pressable } from "react-native";
+import { useState, useRef } from "react";
+import { StyleSheet, View, Pressable, Modal } from "react-native";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -20,6 +20,8 @@ export default function BookingCard({ booking, editable }: Props) {
   const colors = Colors[scheme ?? "light"];
   const [updateBooking] = useUpdateBookingMutation();
   const [open, setOpen] = useState(false);
+  const [dropdownY, setDropdownY] = useState(0);
+  const badgeRef = useRef<View>(null);
 
   const statusColor =
     booking.status === "confirmed"
@@ -27,6 +29,14 @@ export default function BookingCard({ booking, editable }: Props) {
       : booking.status === "pending"
         ? "#EAB308"
         : "#EF4444";
+
+  const openDropdown = () => {
+    if (!editable) return;
+    badgeRef.current?.measure((_x, _y, _w, h, _px, py) => {
+      setDropdownY(py + h + 4);
+      setOpen(true);
+    });
+  };
 
   const changeStatus = async (s: BookingStatus) => {
     setOpen(false);
@@ -66,27 +76,33 @@ export default function BookingCard({ booking, editable }: Props) {
 
         <View style={styles.statusWrap}>
           <Pressable
+            ref={badgeRef}
             style={[styles.badge, { backgroundColor: statusColor }]}
-            onPress={() => editable && setOpen((v) => !v)}
+            onPress={openDropdown}
           >
             <ThemedText style={styles.badgeText}>{booking.status}</ThemedText>
           </Pressable>
 
           {open && (
-            <View style={[styles.dropdown, { backgroundColor: scheme === "dark" ? "#2C2C2E" : "#fff" }]}>
-              {STATUSES.map((s) => (
-                <Pressable
-                  key={s}
-                  style={[styles.item, s === booking.status && { backgroundColor: scheme === "dark" ? "#3A3A3C" : "#E8F0FE" }]}
-                  onPress={() => changeStatus(s)}
-                >
-                  <ThemedText style={[styles.itemText, { color: s === "confirmed" ? colors.tint : s === "pending" ? "#EAB308" : "#EF4444" }]}>
-                    {s}
-                  </ThemedText>
-                  {s === booking.status && <ThemedText style={{ color: colors.tint }}>✓</ThemedText>}
-                </Pressable>
-              ))}
-            </View>
+            <Modal transparent animationType="none" onRequestClose={() => setOpen(false)}>
+              <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
+                <View />
+              </Pressable>
+              <View style={[styles.dropdown, { top: dropdownY, backgroundColor: scheme === "dark" ? "#2C2C2E" : "#fff" }]}>
+                {STATUSES.map((s) => (
+                  <Pressable
+                    key={s}
+                    style={[styles.item, s === booking.status && { backgroundColor: scheme === "dark" ? "#3A3A3C" : "#E8F0FE" }]}
+                    onPress={() => changeStatus(s)}
+                  >
+                    <ThemedText style={[styles.itemText, { color: s === "confirmed" ? colors.tint : s === "pending" ? "#EAB308" : "#EF4444" }]}>
+                      {s}
+                    </ThemedText>
+                    {s === booking.status && <ThemedText style={{ color: colors.tint }}>✓</ThemedText>}
+                  </Pressable>
+                ))}
+              </View>
+            </Modal>
           )}
         </View>
       </View>
@@ -114,14 +130,12 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
   metaText: { fontSize: 13, opacity: 0.6, textTransform: "capitalize" },
   dot: { fontSize: 13, opacity: 0.3 },
-  statusWrap: { position: "relative", zIndex: 999 },
+  statusWrap: { position: "relative" },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
   badgeText: { color: "#fff", fontSize: 12, fontWeight: "600", textTransform: "capitalize" },
   dropdown: {
     position: "absolute",
-    top: "100%",
-    right: 0,
-    marginTop: 4,
+    right: 16,
     minWidth: 130,
     borderRadius: 12,
     padding: 8,
@@ -131,6 +145,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
+  backdrop: { flex: 1 },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
