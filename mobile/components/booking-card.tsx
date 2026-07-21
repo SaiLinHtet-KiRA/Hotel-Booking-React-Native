@@ -22,7 +22,7 @@ export default function BookingCard({ booking, editable }: Props) {
   const [open, setOpen] = useState(false);
   const [dropdownY, setDropdownY] = useState(0);
   const badgeRef = useRef<View>(null);
-
+  console.log(booking);
   const statusColor =
     booking.status === "confirmed"
       ? colors.tint
@@ -62,14 +62,17 @@ export default function BookingCard({ booking, editable }: Props) {
           </ThemedText>
           <View style={styles.metaRow}>
             <HashIcon size={12} color={colors.icon} />
-            <ThemedText style={styles.metaText}>{booking.room.number}</ThemedText>
+            <ThemedText style={styles.metaText}>
+              {booking.room.number}
+            </ThemedText>
             <ThemedText style={styles.dot}>·</ThemedText>
             <TagIcon size={12} color={colors.icon} />
             <ThemedText style={styles.metaText}>{booking.room.type}</ThemedText>
             <ThemedText style={styles.dot}>·</ThemedText>
             <UserGroupIcon size={12} color={colors.icon} />
             <ThemedText style={styles.metaText}>
-              {booking.room.capacity} {booking.room.capacity === 1 ? "person" : "people"}
+              {booking.room.capacity}{" "}
+              {booking.room.capacity === 1 ? "person" : "people"}
             </ThemedText>
           </View>
         </View>
@@ -84,21 +87,53 @@ export default function BookingCard({ booking, editable }: Props) {
           </Pressable>
 
           {open && (
-            <Modal transparent animationType="none" onRequestClose={() => setOpen(false)}>
+            <Modal
+              transparent
+              animationType="none"
+              onRequestClose={() => setOpen(false)}
+            >
               <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
                 <View />
               </Pressable>
-              <View style={[styles.dropdown, { top: dropdownY, backgroundColor: scheme === "dark" ? "#2C2C2E" : "#fff" }]}>
+              <View
+                style={[
+                  styles.dropdown,
+                  {
+                    top: dropdownY,
+                    backgroundColor: scheme === "dark" ? "#2C2C2E" : "#fff",
+                  },
+                ]}
+              >
                 {STATUSES.map((s) => (
                   <Pressable
                     key={s}
-                    style={[styles.item, s === booking.status && { backgroundColor: scheme === "dark" ? "#3A3A3C" : "#E8F0FE" }]}
+                    style={[
+                      styles.item,
+                      s === booking.status && {
+                        backgroundColor:
+                          scheme === "dark" ? "#3A3A3C" : "#E8F0FE",
+                      },
+                    ]}
                     onPress={() => changeStatus(s)}
                   >
-                    <ThemedText style={[styles.itemText, { color: s === "confirmed" ? colors.tint : s === "pending" ? "#EAB308" : "#EF4444" }]}>
+                    <ThemedText
+                      style={[
+                        styles.itemText,
+                        {
+                          color:
+                            s === "confirmed"
+                              ? colors.tint
+                              : s === "pending"
+                                ? "#EAB308"
+                                : "#EF4444",
+                        },
+                      ]}
+                    >
                       {s}
                     </ThemedText>
-                    {s === booking.status && <ThemedText style={{ color: colors.tint }}>✓</ThemedText>}
+                    {s === booking.status && (
+                      <ThemedText style={{ color: colors.tint }}>✓</ThemedText>
+                    )}
                   </Pressable>
                 ))}
               </View>
@@ -110,9 +145,13 @@ export default function BookingCard({ booking, editable }: Props) {
       <View style={styles.divider} />
 
       <View style={styles.footer}>
-        <ThemedText type="defaultSemiBold">{fmtDate(booking.startDate)}</ThemedText>
+        <ThemedText type="defaultSemiBold">
+          {fmtDate(booking.startDate)}
+        </ThemedText>
         <ThemedText style={styles.arrow}>→</ThemedText>
-        <ThemedText type="defaultSemiBold">{fmtDate(booking.endDate)}</ThemedText>
+        <ThemedText type="defaultSemiBold">
+          {fmtDate(booking.endDate)}
+        </ThemedText>
       </View>
     </ThemedView>
   );
@@ -127,12 +166,22 @@ const styles = StyleSheet.create({
   },
   headerLeft: { gap: 6, flex: 1 },
   price: { fontSize: 18 },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    flexWrap: "wrap",
+  },
   metaText: { fontSize: 13, opacity: 0.6, textTransform: "capitalize" },
   dot: { fontSize: 13, opacity: 0.3 },
   statusWrap: { position: "relative" },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  badgeText: { color: "#fff", fontSize: 12, fontWeight: "600", textTransform: "capitalize" },
+  badgeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
   dropdown: {
     position: "absolute",
     right: 16,

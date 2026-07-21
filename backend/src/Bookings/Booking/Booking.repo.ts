@@ -3,6 +3,7 @@ import { NotFoundError } from "../../util/error/errors";
 import BookingModel, { BookingDocument, Booking } from "./Booking.model";
 import { PaginationQuery } from "./interface/Booking.query.type";
 import BookingRepoType from "./interface/Booking.repo.type";
+import RoomModel from "../../Room/Room.model";
 
 class BookingRepo implements BookingRepoType {
   async get({
@@ -15,7 +16,9 @@ class BookingRepo implements BookingRepoType {
         status ? { status: status } : {},
         {},
         page && limit ? { skip: page * limit, limit } : {},
-      ).sort({ createdAt: -1 });
+      )
+        .sort({ createdAt: -1 })
+        .populate({ path: "room", model: RoomModel });
       if (Bookings) return Bookings;
       throw new Error(`Something was wrong in BookingRepo.get`);
     } catch (error) {
