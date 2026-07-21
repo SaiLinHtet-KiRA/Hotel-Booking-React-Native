@@ -27,6 +27,7 @@ class BookingService implements BookingServiceType {
       const newBooking = await BookingRepo.create(BookingData);
       await BookingsService.updateBookings(newBooking.bookings, {
         $push: { bookings: newBooking._id },
+        $inc: { size: 1 },
       });
 
       return newBooking;
@@ -53,6 +54,7 @@ class BookingService implements BookingServiceType {
 
       await BookingsService.updateBookings(deletedBooking.bookings, {
         $pull: { bookings: deletedBooking._id },
+        $inc: { size: -1 },
       });
 
       return deletedBooking;

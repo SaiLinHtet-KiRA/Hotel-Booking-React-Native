@@ -50,6 +50,7 @@ exports.RatingsSchema = zod_1.z.object({
 });
 const DSchema = new mongoose_1.Schema({
     average: { type: Number, default: 0 },
+    size: { type: Number, default: 0 },
     ratings: { type: [mongoose_1.Schema.ObjectId], default: [] },
 }, { versionKey: false });
 DSchema.pre("findOneAndUpdate", async function () {

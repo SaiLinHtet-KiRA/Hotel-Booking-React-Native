@@ -31,6 +31,7 @@ class RatingService {
             const newRating = await Rating_repo_1.default.create(RatingData);
             await Ratings_service_1.default.updateRatings(newRating.RatingsId, {
                 $push: { ratings: newRating._id },
+                $inc: { size: 1 },
             });
             return newRating;
         }
@@ -57,6 +58,7 @@ class RatingService {
             const deletedRating = await Rating_repo_1.default.delete(id);
             await Ratings_service_1.default.updateRatings(deletedRating.RatingsId, {
                 $pull: { ratings: deletedRating._id },
+                $inc: { size: -1 },
             });
             return deletedRating;
         }

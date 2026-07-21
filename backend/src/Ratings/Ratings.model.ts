@@ -18,12 +18,15 @@ export type Ratings = z.infer<typeof RatingsSchema>;
 export type RatingsDocument = HydratedDocument<
   Ratings & {
     average: number;
+    size: number;
   }
 >;
 
 const DSchema = new Schema<RatingsDocument>(
   {
     average: { type: Number, default: 0 },
+    size: { type: Number, default: 0 },
+
     ratings: { type: [Schema.ObjectId], default: [] },
   },
   { versionKey: false },

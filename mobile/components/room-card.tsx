@@ -1,10 +1,13 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Pressable, View, Image } from "react-native";
+import { router } from "expo-router";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Colors } from "@/constants/theme";
+import { UserGroupIcon } from "@/components/svg/AdminIcons";
+import { HashIcon, TagIcon, DollarIcon } from "@/components/svg/FormIcons";
+import StatusBadge from "@/components/status-badge";
 import type Room from "@/interface/Room";
-import type { RoomStatus } from "@/interface/Room";
 
 type Props = { room: Room };
 
@@ -12,54 +15,61 @@ export default function RoomCard({ room }: Props) {
   const scheme = useColorScheme();
   const colors = Colors[scheme ?? "light"];
 
-  const statusColor = (status: RoomStatus) => {
-    if (status === "available") return colors.tint;
-    if (status === "busy") return "#EAB308";
-    return "#EF4444";
-  };
-
   return (
-    <ThemedView
-      style={[
-        styles.card,
-        { backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7" },
-      ]}
-    >
-      <View style={styles.top}>
-        <ThemedText type="defaultSemiBold">Room {room.number}</ThemedText>
-        <View
-          style={[
-            styles.badge,
-            { backgroundColor: statusColor(room.status) },
-          ]}
-        >
-          <ThemedText style={styles.badgeText}>{room.status}</ThemedText>
+    <Pressable onPress={() => router.push(`/admin/rooms/${room._id}`)}>
+      <ThemedView
+        style={[
+          styles.card,
+          { backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7" },
+        ]}
+      >
+        <View style={styles.imageWrap}>
+          <Image
+            source={{ uri: room.photo[0] }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <StatusBadge status={room.status} />
         </View>
-      </View>
-      <View style={styles.row}>
-        <ThemedText style={styles.dim}>{room.type}</ThemedText>
-        <ThemedText style={styles.dim}>${room.price}/night</ThemedText>
-      </View>
-      <View style={styles.row}>
-        <ThemedText style={styles.dim}>Capacity: {room.capacity}</ThemedText>
-      </View>
-    </ThemedView>
+
+        <View style={styles.body}>
+          <View style={styles.iconRow}>
+            <HashIcon color={colors.icon} />
+            <ThemedText style={styles.dim}>{room.number}</ThemedText>
+          </View>
+          <View style={styles.iconRow}>
+            <TagIcon color={colors.icon} />
+            <ThemedText style={styles.dim}>{room.type}</ThemedText>
+          </View>
+          <View style={styles.iconRow}>
+            <UserGroupIcon size={20} color={colors.icon} />
+            <ThemedText style={styles.dim}>{room.capacity}</ThemedText>
+          </View>
+          <View style={styles.iconRow}>
+            <DollarIcon color={colors.icon} />
+            <ThemedText style={styles.dim}>{room.price}</ThemedText>
+          </View>
+        </View>
+      </ThemedView>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: 12, padding: 14, gap: 6 },
-  top: {
+  card: { borderRadius: 14, overflow: "hidden" },
+  imageWrap: { position: "relative" },
+  image: { width: "100%", height: 160, backgroundColor: "#000" },
+  body: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-  badgeText: { color: "#fff", fontSize: 12, fontWeight: "600" },
-  row: {
+  iconRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    gap: 4,
   },
-  dim: { opacity: 0.6 },
+  dim: { opacity: 0.6, fontSize: 13, textTransform: "capitalize" },
 });

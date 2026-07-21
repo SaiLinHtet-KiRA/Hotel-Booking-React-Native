@@ -60,7 +60,7 @@ class RoomController implements RoomControllerType {
   ): Promise<void> {
     try {
       const roomData = req.body;
-
+      console.log(roomData);
       const Room = await RoomService.createRoom(roomData);
       res
         .status(200)

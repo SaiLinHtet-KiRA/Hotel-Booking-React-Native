@@ -12,5 +12,3 @@ export default function MoreScreen() {
 
   return <UserLayout />;
 }
-
-const styles = StyleSheet.create({});

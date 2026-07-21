@@ -41,7 +41,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const zod_1 = require("zod");
 const Ratings_service_1 = __importDefault(require("../Ratings/Ratings.service"));
 exports.RoomSchema = zod_1.z.object({
-    number: zod_1.z
+    number: zod_1.z.coerce
         .number({ error: "Number field is missing" })
         .min(1, { error: "Number must start from 1" }),
     type: zod_1.z.enum(["single bed", "double bed", "family", "deluxe", "suite"], {
@@ -53,12 +53,13 @@ exports.RoomSchema = zod_1.z.object({
         .url({ message: "Each photo must be a valid URL." }), {
         message: "Photo is required.",
     })
-        .min(1, { message: "At least one photo is required." }),
-    capacity: zod_1.z
+        .min(1, { message: "At least one photo is required." })
+        .optional(),
+    capacity: zod_1.z.coerce
         .number({ error: "Capacity field is missing" })
         .min(1, { error: "Must start from 1" })
         .max(5, "Only 5 people can live"),
-    price: zod_1.z
+    price: zod_1.z.coerce
         .number({ error: "Price field is missing" })
         .min(1, { error: "Price can't be last than 0" }),
     status: zod_1.z.enum(["available", "busy", "maintenance"], {

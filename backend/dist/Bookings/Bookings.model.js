@@ -46,6 +46,7 @@ exports.BookingsSchema = zod_1.z.object({
 });
 const DSchema = new mongoose_1.Schema({
     bookings: { type: [mongoose_1.Schema.ObjectId], default: [] },
+    size: { type: Number, default: 0 },
 }, { versionKey: false });
 const BookingsModel = mongoose_1.default.connection
     .useDb("Bookings")

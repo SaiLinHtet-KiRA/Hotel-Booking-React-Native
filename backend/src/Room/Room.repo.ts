@@ -1,4 +1,3 @@
-import UserModel from "../User/User.model";
 import { NotFoundError } from "../util/error/errors";
 import RoomModel, { RoomDocument, Room } from "./Room.model";
 import { PaginationQuery } from "./interface/Room.query.type";
@@ -15,12 +14,7 @@ class RoomRepo implements RoomRepoType {
           : {},
         {},
         page && limit ? { skip: page * limit, limit } : {},
-      )
-        .populate({
-          path: "userId",
-          model: UserModel,
-        })
-        .sort({ id: -1 });
+      ).sort({ createdAt: -1 });
       if (Rooms) return Rooms;
       throw new Error(`Something was wrong in RoomRepo.get`);
     } catch (error) {

@@ -25,7 +25,9 @@ export default function AdminLayout() {
         ),
       }}
     >
-      <Stack.Screen name="rooms" options={{ title: "Rooms" }} />
+      <Stack.Screen name="rooms/index" options={{ title: "Rooms" }} />
+      <Stack.Screen name="rooms/create" options={{ title: "Create Room" }} />
+      <Stack.Screen name="rooms/[id]" options={{ title: "Edit Room" }} />
       <Stack.Screen name="bookings" options={{ title: "Bookings" }} />
       <Stack.Screen name="users" options={{ title: "Users" }} />
       <Stack.Screen name="reviews" options={{ title: "Reviews" }} />

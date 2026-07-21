@@ -8,14 +8,13 @@ import type { ComponentType } from "react";
 import type { SvgProps } from "react-native-svg";
 import {
   RoomIcon,
-  GearIcon,
   ChartIcon,
-  StarIcon,
   InfoIcon,
   LogoutIcon,
   UserGroupIcon,
   HelpCenterIcon,
 } from "@/components/svg/AdminIcons";
+import { UserIcon } from "./svg";
 
 type AdminTab = {
   label: string;
@@ -39,10 +38,7 @@ const adminTabs: AdminCategory[] = [
   },
   {
     category: "Settings",
-    tabs: [
-      { label: "Reviews", icon: StarIcon, path: "/admin/reviews" },
-      { label: "Profile", icon: GearIcon, path: "/admin/config" },
-    ],
+    tabs: [{ label: "Profile", icon: UserIcon, path: "/admin/config" }],
   },
   {
     category: "Help and info",
@@ -53,9 +49,7 @@ const adminTabs: AdminCategory[] = [
   },
   {
     category: "Manage your account",
-    tabs: [
-      { label: "Sign out", icon: LogoutIcon, path: "" },
-    ],
+    tabs: [{ label: "Sign out", icon: LogoutIcon, path: "" }],
   },
 ];
 
@@ -81,7 +75,9 @@ export default function AdminLayout() {
                 key={tab.label}
                 style={[
                   styles.tabRow,
-                  { backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7" },
+                  {
+                    backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
+                  },
                 ]}
                 onPress={() => {
                   if (tab.path) router.push(tab.path);
@@ -91,7 +87,10 @@ export default function AdminLayout() {
                   <View
                     style={[
                       styles.iconBox,
-                      { backgroundColor: scheme === "dark" ? "#2C2C2E" : "#E8F0FE" },
+                      {
+                        backgroundColor:
+                          scheme === "dark" ? "#2C2C2E" : "#E8F0FE",
+                      },
                     ]}
                   >
                     <tab.icon size={22} color={colors.tint} />
@@ -108,7 +107,9 @@ export default function AdminLayout() {
               <ThemedView
                 style={[
                   styles.empty,
-                  { backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7" },
+                  {
+                    backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
+                  },
                 ]}
               >
                 <ThemedText style={{ color: colors.icon }}>

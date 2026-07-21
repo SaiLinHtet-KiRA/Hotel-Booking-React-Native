@@ -27,6 +27,8 @@ class RatingService implements RatingServiceType {
       const newRating = await RatingRepo.create(RatingData);
       await RatingsService.updateRatings(newRating.RatingsId, {
         $push: { ratings: newRating._id },
+
+        $inc: { size: 1 },
       });
 
       return newRating;
@@ -53,6 +55,7 @@ class RatingService implements RatingServiceType {
 
       await RatingsService.updateRatings(deletedRating.RatingsId, {
         $pull: { ratings: deletedRating._id },
+        $inc: { size: -1 },
       });
 
       return deletedRating;

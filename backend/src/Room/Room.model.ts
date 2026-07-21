@@ -4,7 +4,7 @@ import { RatingsDocument } from "../Ratings/Ratings.model";
 import RatingsService from "../Ratings/Ratings.service";
 
 export const RoomSchema = z.object({
-  number: z
+  number: z.coerce
     .number({ error: "Number field is missing" })
     .min(1, { error: "Number must start from 1" }),
   type: z.enum(["single bed", "double bed", "family", "deluxe", "suite"], {
@@ -19,12 +19,13 @@ export const RoomSchema = z.object({
         message: "Photo is required.",
       },
     )
-    .min(1, { message: "At least one photo is required." }),
-  capacity: z
+    .min(1, { message: "At least one photo is required." })
+    .optional(),
+  capacity: z.coerce
     .number({ error: "Capacity field is missing" })
     .min(1, { error: "Must start from 1" })
     .max(5, "Only 5 people can live"),
-  price: z
+  price: z.coerce
     .number({ error: "Price field is missing" })
     .min(1, { error: "Price can't be last than 0" }),
   status: z.enum(["available", "busy", "maintenance"], {

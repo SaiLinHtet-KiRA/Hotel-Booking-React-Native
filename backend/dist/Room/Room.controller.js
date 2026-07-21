@@ -45,6 +45,7 @@ class RoomController {
     async createRoom(req, res) {
         try {
             const roomData = req.body;
+            console.log(roomData);
             const Room = await Room_service_1.default.createRoom(roomData);
             res
                 .status(200)

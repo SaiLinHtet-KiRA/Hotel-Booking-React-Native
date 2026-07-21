@@ -31,6 +31,7 @@ class BookingService {
             const newBooking = await Booking_repo_1.default.create(BookingData);
             await Bookings_service_1.default.updateBookings(newBooking.bookings, {
                 $push: { bookings: newBooking._id },
+                $inc: { size: 1 },
             });
             return newBooking;
         }
@@ -57,6 +58,7 @@ class BookingService {
             const deletedBooking = await Booking_repo_1.default.delete(id);
             await Bookings_service_1.default.updateBookings(deletedBooking.bookings, {
                 $pull: { bookings: deletedBooking._id },
+                $inc: { size: -1 },
             });
             return deletedBooking;
         }

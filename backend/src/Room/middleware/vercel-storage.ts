@@ -7,16 +7,26 @@ const SaveImage = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const files = req.files as Express.Multer.File[] | undefined;
 
-    if (files?.photo?.[0]) {
-      const path = `room/${new Date().getTime()}`;
-      const blob = await put(path, files.icon[0].buffer, {
-        access: "public",
-        addRandomSuffix: true,
-        contentType: files.icon[0].mimetype,
-      });
-      req.body.icon = blob.url;
+    console.log("files", files);
+
+    if (!files) return next();
+
+    if (files?.length) {
+      const photos = await Promise.all(
+        files?.map(async (file) => {
+          const path = `room/${new Date().getTime()}`;
+          const blob = await put(path, file.buffer, {
+            access: "public",
+            addRandomSuffix: true,
+            contentType: file.mimetype,
+          });
+          return blob.url;
+        }),
+      );
+
+      req.body.photo = photos;
     }
 
     next();
@@ -24,4 +34,5 @@ const SaveImage = async (
     next(error);
   }
 };
+
 export default SaveImage;

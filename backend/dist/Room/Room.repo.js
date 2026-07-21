@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const User_model_1 = __importDefault(require("../User/User.model"));
 const errors_1 = require("../util/error/errors");
 const Room_model_1 = __importDefault(require("./Room.model"));
 class RoomRepo {
@@ -13,12 +12,7 @@ class RoomRepo {
                 ? {
                     type: type,
                 }
-                : {}, {}, page && limit ? { skip: page * limit, limit } : {})
-                .populate({
-                path: "userId",
-                model: User_model_1.default,
-            })
-                .sort({ id: -1 });
+                : {}, {}, page && limit ? { skip: page * limit, limit } : {}).sort({ createdAt: -1 });
             if (Rooms)
                 return Rooms;
             throw new Error(`Something was wrong in RoomRepo.get`);

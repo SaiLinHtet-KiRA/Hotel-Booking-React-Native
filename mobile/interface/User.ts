@@ -1,10 +1,16 @@
+export interface UserBookings {
+  _id: string;
+  size: number;
+  bookings: string[];
+}
+
 export default interface User {
   _id: string;
   id: number;
   name: string;
   email: string;
   role: "admin" | "user";
-  bookings: string;
+  bookings: string | UserBookings;
 }
 
 export type UserDTO = {

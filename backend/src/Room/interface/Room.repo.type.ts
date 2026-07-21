@@ -3,6 +3,7 @@ import { PaginationQuery } from "./Room.query.type";
 
 export default interface RoomRepoType {
   get(query: PaginationQuery): Promise<RoomDocument[]>;
+  getCount(query: PaginationQuery): Promise<number>;
   getByID(id: string): Promise<RoomDocument>;
   create(data: Room): Promise<RoomDocument>;
   update(id: string, data: Room): Promise<RoomDocument>;

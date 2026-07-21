@@ -16,13 +16,14 @@ export type Bookings = z.infer<typeof BookingsSchema>;
 
 export type BookingsDocument = HydratedDocument<
   Bookings & {
-    average: number;
+    size: number;
   }
 >;
 
 const DSchema = new Schema<BookingsDocument>(
   {
     bookings: { type: [Schema.ObjectId], default: [] },
+    size: { type: Number, default: 0 },
   },
   { versionKey: false },
 );
