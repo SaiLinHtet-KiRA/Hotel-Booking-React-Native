@@ -5,10 +5,21 @@ import { validateZod } from "../util/validate";
 import { PaginationQuery } from "./interface/Room.query.type";
 
 class RoomService implements RoomServiceType {
-  async getRooms(query: PaginationQuery): Promise<RoomDocument[]> {
+  async getRooms(
+    query: PaginationQuery,
+  ): Promise<{ data: RoomDocument[]; size: number }> {
     try {
-      const Rooms = await RoomRepo.get(query);
-      return Rooms;
+      const data = await RoomRepo.get(query);
+      const size = await RoomRepo.getCount(query);
+
+      return { data, size };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getSize(query: PaginationQuery): Promise<number> {
+    try {
+      return await RoomRepo.getCount(query);
     } catch (error) {
       throw error;
     }

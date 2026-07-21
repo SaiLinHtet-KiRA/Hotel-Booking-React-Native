@@ -9,7 +9,17 @@ const User_repo_1 = __importDefault(require("./User.repo"));
 class UserService {
     async getUsers(query) {
         try {
-            return await User_repo_1.default.get(query);
+            const data = await User_repo_1.default.get(query);
+            const size = await this.getSize(query);
+            return { data, size };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getSize(query) {
+        try {
+            return await User_repo_1.default.getCount(query);
         }
         catch (error) {
             throw error;

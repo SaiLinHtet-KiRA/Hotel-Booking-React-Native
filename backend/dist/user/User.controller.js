@@ -20,10 +20,8 @@ class UserController {
     async getUsers(req, res) {
         try {
             const query = req.query;
-            const User = await User_service_1.default.getUsers(query);
-            res
-                .status(200)
-                .json({ message: "Users fetched successfully", data: User });
+            const data = await User_service_1.default.getUsers(query);
+            res.status(200).json({ message: "Users fetched successfully", ...data });
         }
         catch (error) {
             throw error;

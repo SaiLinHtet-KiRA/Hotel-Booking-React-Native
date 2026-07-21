@@ -9,8 +9,17 @@ const validate_1 = require("../util/validate");
 class RoomService {
     async getRooms(query) {
         try {
-            const Rooms = await Room_repo_1.default.get(query);
-            return Rooms;
+            const data = await Room_repo_1.default.get(query);
+            const size = await Room_repo_1.default.getCount(query);
+            return { data, size };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getSize(query) {
+        try {
+            return await Room_repo_1.default.getCount(query);
         }
         catch (error) {
             throw error;

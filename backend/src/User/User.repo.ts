@@ -29,6 +29,22 @@ class UserRepo implements UserRepoType {
       throw error;
     }
   }
+  async getCount({ role, email }: PaginationQuery): Promise<number> {
+    try {
+      return await UserModel.countDocuments(
+        email
+          ? { email }
+          : role == "admin" || role == "user"
+            ? {
+                role,
+              }
+            : {},
+        {},
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
   async getByID(id: string): Promise<UserDocument> {
     try {
       const User = await UserModel.findById(id);

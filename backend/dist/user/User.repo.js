@@ -23,6 +23,20 @@ class UserRepo {
             throw error;
         }
     }
+    async getCount({ role, email }) {
+        try {
+            return await User_model_1.default.countDocuments(email
+                ? { email }
+                : role == "admin" || role == "user"
+                    ? {
+                        role,
+                    }
+                    : {}, {});
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async getByID(id) {
         try {
             const User = await User_model_1.default.findById(id);

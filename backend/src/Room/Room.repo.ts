@@ -4,19 +4,48 @@ import { PaginationQuery } from "./interface/Room.query.type";
 import RoomRepoType from "./interface/Room.repo.type";
 
 class RoomRepo implements RoomRepoType {
-  async get({ limit, page, type }: PaginationQuery): Promise<RoomDocument[]> {
+  async get({
+    limit,
+    page,
+    type,
+    status,
+  }: PaginationQuery): Promise<RoomDocument[]> {
     try {
       const Rooms = await RoomModel.find(
-        type
+        type && status
           ? {
               type: type,
+              status: status,
             }
-          : {},
+          : type
+            ? { type: type }
+            : status
+              ? { status: status }
+              : {},
         {},
         page && limit ? { skip: page * limit, limit } : {},
       ).sort({ createdAt: -1 });
       if (Rooms) return Rooms;
       throw new Error(`Something was wrong in RoomRepo.get`);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCount({ type, status }: PaginationQuery): Promise<number> {
+    try {
+      return await RoomModel.countDocuments(
+        type && status
+          ? {
+              type: type,
+              status: status,
+            }
+          : type
+            ? { type: type }
+            : status
+              ? { status: status }
+              : {},
+        {},
+      );
     } catch (error) {
       throw error;
     }

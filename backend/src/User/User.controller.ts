@@ -28,15 +28,13 @@ class UserController implements UserControllerType {
 
   async getUsers(
     req: GetUsersRequest,
-    res: Response<{ message: string; data: UserDocument[] }>,
+    res: Response<{ message: string; data: UserDocument[]; size: number }>,
   ): Promise<void> {
     try {
       const query = req.query;
 
-      const User = await UserService.getUsers(query);
-      res
-        .status(200)
-        .json({ message: "Users fetched successfully", data: User });
+      const data = await UserService.getUsers(query);
+      res.status(200).json({ message: "Users fetched successfully", ...data });
     } catch (error) {
       throw error;
     }

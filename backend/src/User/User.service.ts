@@ -6,9 +6,21 @@ import { User, UserDocument, UserSchema } from "./User.model";
 import UserRepo from "./User.repo";
 
 class UserService implements UserServiceType {
-  async getUsers(query: PaginationQuery): Promise<UserDocument[]> {
+  async getUsers(
+    query: PaginationQuery,
+  ): Promise<{ data: UserDocument[]; size: number }> {
     try {
-      return await UserRepo.get(query);
+      const data = await UserRepo.get(query);
+      const size = await this.getSize(query);
+
+      return { data, size };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getSize(query: PaginationQuery): Promise<number> {
+    try {
+      return await UserRepo.getCount(query);
     } catch (error) {
       throw error;
     }

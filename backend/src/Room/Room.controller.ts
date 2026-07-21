@@ -25,14 +25,12 @@ class RoomController implements RoomControllerType {
 
   async getRooms(
     req: Request<null, null, null, PaginationQuery>,
-    res: Response<{ message: string; data: RoomDocument[] }>,
+    res: Response<{ message: string; data: RoomDocument[]; size: number }>,
   ): Promise<void> {
     try {
       const query = req.query;
-      const Room = await RoomService.getRooms(query);
-      res
-        .status(200)
-        .json({ message: "Rooms fetched successfully", data: Room });
+      const data = await RoomService.getRooms(query);
+      res.status(200).json({ message: "Rooms fetched successfully", ...data });
     } catch (error) {
       throw error;
     }
@@ -60,7 +58,6 @@ class RoomController implements RoomControllerType {
   ): Promise<void> {
     try {
       const roomData = req.body;
-      console.log(roomData);
       const Room = await RoomService.createRoom(roomData);
       res
         .status(200)

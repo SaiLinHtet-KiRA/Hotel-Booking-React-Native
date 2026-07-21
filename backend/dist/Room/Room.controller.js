@@ -20,10 +20,8 @@ class RoomController {
     async getRooms(req, res) {
         try {
             const query = req.query;
-            const Room = await Room_service_1.default.getRooms(query);
-            res
-                .status(200)
-                .json({ message: "Rooms fetched successfully", data: Room });
+            const data = await Room_service_1.default.getRooms(query);
+            res.status(200).json({ message: "Rooms fetched successfully", ...data });
         }
         catch (error) {
             throw error;
@@ -45,7 +43,6 @@ class RoomController {
     async createRoom(req, res) {
         try {
             const roomData = req.body;
-            console.log(roomData);
             const Room = await Room_service_1.default.createRoom(roomData);
             res
                 .status(200)

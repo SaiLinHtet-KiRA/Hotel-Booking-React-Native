@@ -15,7 +15,7 @@ export default interface UserControllerType {
   ): Promise<void>;
   getUsers(
     req: GetUsersRequest,
-    res: Response<{ message: string; data: UserDocument[] }>,
+    res: Response<{ message: string; data: UserDocument[]; size: number }>,
   ): Promise<void>;
   updateUser(
     req: UpdateUserRequest,

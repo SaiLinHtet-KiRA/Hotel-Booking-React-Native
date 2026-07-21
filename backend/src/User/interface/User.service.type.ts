@@ -3,8 +3,10 @@ import { User, UserDocument } from "../User.model";
 import { PaginationQuery } from "./User.query.type";
 
 export default interface UserServiceType {
-  getUsers(query: PaginationQuery): Promise<UserDocument[]>;
-  getSizes(query: PaginationQuery): Promise<number>;
+  getUsers(
+    query: PaginationQuery,
+  ): Promise<{ data: UserDocument[]; size: number }>;
+  getSize(query: PaginationQuery): Promise<number>;
   getUser(ID: string): Promise<UserDocument>;
   createUser(data: User): Promise<UserDocument>;
   updateUser(id: string, data: UpdateQuery<User>): Promise<UserDocument>;

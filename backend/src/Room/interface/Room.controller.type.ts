@@ -11,7 +11,7 @@ export default interface RoomControllerType {
   ): Promise<void>;
   getRooms(
     req: Request<null, null, null, PaginationQuery>,
-    res: Response<{ message: string; data: RoomDocument[] }>,
+    res: Response<{ message: string; data: RoomDocument[]; size: number }>,
   ): Promise<void>;
   updateRoom(
     req: Request<{ id: string }, {}, RoomCreateBody, {}>,

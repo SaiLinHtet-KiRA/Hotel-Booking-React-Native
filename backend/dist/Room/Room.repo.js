@@ -6,16 +6,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const errors_1 = require("../util/error/errors");
 const Room_model_1 = __importDefault(require("./Room.model"));
 class RoomRepo {
-    async get({ limit, page, type }) {
+    async get({ limit, page, type, status, }) {
         try {
-            const Rooms = await Room_model_1.default.find(type
+            const Rooms = await Room_model_1.default.find(type && status
                 ? {
                     type: type,
+                    status: status,
                 }
-                : {}, {}, page && limit ? { skip: page * limit, limit } : {}).sort({ createdAt: -1 });
+                : type
+                    ? { type: type }
+                    : status
+                        ? { status: status }
+                        : {}, {}, page && limit ? { skip: page * limit, limit } : {}).sort({ createdAt: -1 });
             if (Rooms)
                 return Rooms;
             throw new Error(`Something was wrong in RoomRepo.get`);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getCount({ type, status }) {
+        try {
+            return await Room_model_1.default.countDocuments(type && status
+                ? {
+                    type: type,
+                    status: status,
+                }
+                : type
+                    ? { type: type }
+                    : status
+                        ? { status: status }
+                        : {}, {});
         }
         catch (error) {
             throw error;
