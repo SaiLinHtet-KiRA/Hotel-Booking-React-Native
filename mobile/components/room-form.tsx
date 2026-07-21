@@ -28,10 +28,11 @@ export type RoomFormValues = {
 type Props = {
   room?: Room;
   isLoading?: boolean;
+  error?: string;
   onSubmit: (data: RoomFormValues) => void;
 };
 
-export default function RoomForm({ room, isLoading = false, onSubmit }: Props) {
+export default function RoomForm({ room, isLoading = false, error, onSubmit }: Props) {
   const scheme = useColorScheme();
   const colors = Colors[scheme ?? "light"];
   const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
@@ -162,6 +163,8 @@ export default function RoomForm({ room, isLoading = false, onSubmit }: Props) {
         />
       </View>
 
+      {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
+
       <Pressable
         style={[styles.submitBtn, { backgroundColor: isLoading ? "#A7F3D0" : colors.tint }]}
         onPress={handleSubmit(submit)}
@@ -190,4 +193,5 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   submitText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  error: { color: "#EF4444", fontSize: 13, textAlign: "center" },
 });

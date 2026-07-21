@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import { useGetRoomQuery, useUpdateRoomMutation } from "@/redux/api/room";
 import RoomForm, { RoomFormValues } from "@/components/room-form";
@@ -8,6 +9,7 @@ export default function EditRoomScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading: loading } = useGetRoomQuery(id!);
   const [updateRoom, { isLoading }] = useUpdateRoomMutation();
+  const [error, setError] = useState("");
 
   if (loading) {
     return (
@@ -20,6 +22,7 @@ export default function EditRoomScreen() {
   }
 
   const onSubmit = async (formData: RoomFormValues) => {
+    setError("");
     try {
       const form = new FormData();
       form.append("number", String(formData.number));
@@ -38,12 +41,13 @@ export default function EditRoomScreen() {
 
       await updateRoom({ id: id!, body: form }).unwrap();
       router.back();
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
+      const e = err as { data?: { message?: string } };
+      setError(e?.data?.message || "Something went wrong");
     }
   };
 
   return (
-    <RoomForm room={data?.data} onSubmit={onSubmit} isLoading={isLoading} />
+    <RoomForm room={data?.data} onSubmit={onSubmit} isLoading={isLoading} error={error} />
   );
 }

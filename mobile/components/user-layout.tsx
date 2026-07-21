@@ -51,24 +51,18 @@ export default function UserLayout() {
                 key={tab.label}
                 style={[
                   styles.tabRow,
-                  { backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7" },
+                  {
+                    backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
+                  },
                 ]}
                 onPress={() => handlePress(tab)}
               >
                 <View style={styles.tabLeft}>
-                  <View
-                    style={[
-                      styles.iconBox,
-                      { backgroundColor: scheme === "dark" ? "#2C2C2E" : "#E8F0FE" },
-                    ]}
-                  >
+                  <View style={[styles.iconBox]}>
                     <tab.icon size={22} color={colors.tint} />
                   </View>
                   <ThemedText type="defaultSemiBold">{tab.label}</ThemedText>
                 </View>
-                <ThemedText style={{ color: colors.icon, fontSize: 18 }}>
-                  ›
-                </ThemedText>
               </Pressable>
             ))}
           </View>
@@ -102,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 8,
   },
-  tabLeft: { flexDirection: "row", alignItems: "center", gap: 14 },
+  tabLeft: { flexDirection: "row", alignItems: "center" },
   iconBox: {
     width: 40,
     height: 40,

@@ -74,22 +74,11 @@ export default function AdminLayout() {
                 onPress={() => handlePress(tab)}
               >
                 <View style={styles.tabLeft}>
-                  <View
-                    style={[
-                      styles.iconBox,
-                      {
-                        backgroundColor:
-                          scheme === "dark" ? "#2C2C2E" : "#E8F0FE",
-                      },
-                    ]}
-                  >
+                  <View style={[styles.iconBox]}>
                     <tab.icon size={22} color={colors.tint} />
                   </View>
                   <ThemedText type="defaultSemiBold">{tab.label}</ThemedText>
                 </View>
-                <ThemedText style={{ color: colors.icon, fontSize: 18 }}>
-                  ›
-                </ThemedText>
               </Pressable>
             ))}
 
@@ -127,22 +116,11 @@ export default function AdminLayout() {
                 onPress={() => handlePress(tab)}
               >
                 <View style={styles.tabLeft}>
-                  <View
-                    style={[
-                      styles.iconBox,
-                      {
-                        backgroundColor:
-                          scheme === "dark" ? "#2C2C2E" : "#E8F0FE",
-                      },
-                    ]}
-                  >
+                  <View style={[styles.iconBox]}>
                     <tab.icon size={22} color={colors.tint} />
                   </View>
                   <ThemedText type="defaultSemiBold">{tab.label}</ThemedText>
                 </View>
-                <ThemedText style={{ color: colors.icon, fontSize: 18 }}>
-                  ›
-                </ThemedText>
               </Pressable>
             ))}
 
@@ -201,7 +179,6 @@ const styles = StyleSheet.create({
   tabLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
   },
   iconBox: {
     width: 40,
