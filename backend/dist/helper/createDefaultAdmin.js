@@ -11,7 +11,7 @@ async function createDefaultAdmin() {
         const existingDefaultAdmin = await User_service_1.default.getUsers({
             role: "admin",
         });
-        if (existingDefaultAdmin.length) {
+        if (existingDefaultAdmin.data.length) {
             return;
         }
         await User_service_1.default.createUser({

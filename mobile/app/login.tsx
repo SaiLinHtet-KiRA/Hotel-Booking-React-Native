@@ -7,8 +7,8 @@ import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { EyeIcon, EyeOffIcon } from "@/components/svg";
-import { authApiSlice, useLoginMutation } from "@/redux/api/auth";
-import store from "@/redux/store";
+import { useLoginMutation } from "@/redux/api/auth";
+import { setToken } from "@/util/token";
 
 type LoginForm = {
   email: string;
@@ -27,8 +27,8 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      await login(data).unwrap();
-      store.dispatch(authApiSlice.endpoints.getProfile.initiate());
+      const res = await login(data).unwrap();
+      await setToken(res.token);
       router.replace("/");
     } catch (err) {
       console.log(err);

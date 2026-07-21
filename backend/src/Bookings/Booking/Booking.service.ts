@@ -3,12 +3,25 @@ import BookingRepo from "./Booking.repo";
 import BookingServiceType from "./interface/Booking.service.type";
 import { validateZod } from "../../util/validate";
 import BookingsService from "../Bookings.service";
+import { PaginationQuery } from "./interface/Booking.query.type";
+import { UpdateQuery } from "mongoose";
 
 class BookingService implements BookingServiceType {
-  async getBookings(): Promise<BookingDocument[]> {
+  async getBookings(
+    query: PaginationQuery,
+  ): Promise<{ data: BookingDocument[]; size: number }> {
     try {
-      const Bookings = await BookingRepo.get();
-      return Bookings;
+      const data = await BookingRepo.get(query);
+      const size = await this.getSize(query);
+
+      return { data, size };
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getSize(query: PaginationQuery): Promise<number> {
+    try {
+      return await BookingRepo.getCount(query);
     } catch (error) {
       throw error;
     }
@@ -35,15 +48,14 @@ class BookingService implements BookingServiceType {
       throw error;
     }
   }
-  async updateBooking(id: string, data: Booking): Promise<BookingDocument> {
+  async updateBooking(
+    id: string,
+    data: UpdateQuery<Booking>,
+  ): Promise<BookingDocument> {
     try {
-      try {
-        const BookingData = validateZod(BookingSchema, data);
+      const BookingData = validateZod(BookingSchema.partial(), data);
 
-        return await BookingRepo.update(id, BookingData);
-      } catch (error) {
-        throw error;
-      }
+      return await BookingRepo.update(id, BookingData);
     } catch (error) {
       throw error;
     }

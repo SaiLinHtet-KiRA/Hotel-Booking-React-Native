@@ -130,17 +130,17 @@ describe("User Service", () => {
         });
         describe("List Users", () => {
             it("WITH SUCCESS", async () => {
-                const users = await User_service_1.default.getUsers({});
+                const { data: users } = await User_service_1.default.getUsers({});
                 expect(Array.isArray(users)).toBe(true);
                 expect(users.length).toBeGreaterThanOrEqual(1);
             });
             it("WITH PAGINATION", async () => {
-                const users = await User_service_1.default.getUsers({ page: 0, limit: 10 });
+                const { data: users } = await User_service_1.default.getUsers({ page: 0, limit: 10 });
                 expect(Array.isArray(users)).toBe(true);
                 expect(users.length).toBeGreaterThanOrEqual(1);
             });
             it("WITH ROLE FILTER", async () => {
-                const users = await User_service_1.default.getUsers({ role: "user" });
+                const { data: users } = await User_service_1.default.getUsers({ role: "user" });
                 expect(Array.isArray(users)).toBe(true);
                 expect(users.length).toBeGreaterThanOrEqual(1);
             });

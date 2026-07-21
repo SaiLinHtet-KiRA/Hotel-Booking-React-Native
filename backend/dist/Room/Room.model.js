@@ -32,14 +32,10 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const zod_1 = require("zod");
-const Ratings_service_1 = __importDefault(require("../Ratings/Ratings.service"));
 exports.RoomSchema = zod_1.z.object({
     number: zod_1.z.coerce
         .number({ error: "Number field is missing" })
@@ -80,16 +76,7 @@ const DSchema = new mongoose_1.Schema({
         enum: ["available", "busy", "maintenance"],
         default: "available",
     },
-    ratings: {
-        type: mongoose_1.Schema.ObjectId,
-    },
     photo: { type: [String], default: [] },
 }, { versionKey: false, timestamps: true });
-DSchema.pre("save", async function () {
-    if (this.isNew) {
-        const newRatings = await Ratings_service_1.default.createRatings({ ratings: [] });
-        this.ratings = newRatings._id;
-    }
-});
 const RoomModel = mongoose_1.default.connection.useDb("Room").model("Room", DSchema);
 exports.default = RoomModel;

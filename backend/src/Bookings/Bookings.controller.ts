@@ -5,7 +5,7 @@ import BookingsControllerType from "./interface/Bookings.controller.type";
 
 class BookingsController implements BookingsControllerType {
   async getBookings(
-    req: Request<{ id: string }, null, null, null>,
+    req: Request<{ id: string }>,
     res: Response<{ message: string; data: BookingsDocument }>,
   ): Promise<void> {
     try {

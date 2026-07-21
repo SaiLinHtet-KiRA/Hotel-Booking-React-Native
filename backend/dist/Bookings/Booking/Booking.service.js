@@ -8,10 +8,19 @@ const Booking_repo_1 = __importDefault(require("./Booking.repo"));
 const validate_1 = require("../../util/validate");
 const Bookings_service_1 = __importDefault(require("../Bookings.service"));
 class BookingService {
-    async getBookings() {
+    async getBookings(query) {
         try {
-            const Bookings = await Booking_repo_1.default.get();
-            return Bookings;
+            const data = await Booking_repo_1.default.get(query);
+            const size = await this.getSize(query);
+            return { data, size };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getSize(query) {
+        try {
+            return await Booking_repo_1.default.getCount(query);
         }
         catch (error) {
             throw error;
@@ -41,13 +50,8 @@ class BookingService {
     }
     async updateBooking(id, data) {
         try {
-            try {
-                const BookingData = (0, validate_1.validateZod)(Booking_model_1.BookingSchema, data);
-                return await Booking_repo_1.default.update(id, BookingData);
-            }
-            catch (error) {
-                throw error;
-            }
+            const BookingData = (0, validate_1.validateZod)(Booking_model_1.BookingSchema.partial(), data);
+            return await Booking_repo_1.default.update(id, BookingData);
         }
         catch (error) {
             throw error;

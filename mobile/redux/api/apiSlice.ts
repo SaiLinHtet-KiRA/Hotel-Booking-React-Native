@@ -1,15 +1,16 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
-import { Platform } from "react-native";
-
-const baseUrl = Platform.select({
-  android: "http://10.0.2.2:4000",
-  ios: "http://localhost:4000",
-  default: "http://172.20.10.2:4000",
-});
+import { getToken } from "../../util/token";
+import { BACKEND_URL } from "@/config";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://172.20.10.2:4000",
-  credentials: "include",
+  baseUrl: BACKEND_URL,
+  prepareHeaders: async (headers) => {
+    const token = await getToken();
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
 });
 
 export const apiSlice = createApi({

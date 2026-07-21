@@ -9,13 +9,6 @@ export type RoomType =
 
 export type RoomStatus = "available" | "busy" | "maintenance";
 
-export interface RoomRatings {
-  _id: string;
-  average: number;
-  size: number;
-  ratings: string[];
-}
-
 export default interface Room {
   _id: string;
   number: number;
@@ -24,7 +17,6 @@ export default interface Room {
   capacity: number;
   price: number;
   status: RoomStatus;
-  ratings: string | RoomRatings;
 }
 
 export type RoomDTO = {

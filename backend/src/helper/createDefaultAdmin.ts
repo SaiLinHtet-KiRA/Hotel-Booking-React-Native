@@ -7,7 +7,7 @@ export async function createDefaultAdmin() {
       role: "admin",
     });
 
-    if (existingDefaultAdmin.length) {
+    if (existingDefaultAdmin.data.length) {
       return;
     }
     await UserService.createUser({

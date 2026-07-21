@@ -9,7 +9,11 @@ export default interface AuthControllerType {
   ): Promise<void>;
   Login(
     req: Request<null, null, LoginType, null>,
-    res: Response<{ message: string }>,
+    res: Response<{
+      message: string;
+      token?: string;
+      data?: { _id: string; name: string; email: string; role: string };
+    }>,
   ): Promise<void>;
   getProfile(
     req: Request<null, null, null, null>,
@@ -19,7 +23,7 @@ export default interface AuthControllerType {
         _id: string;
         name: string;
         role: string;
-        records: unknown[];
+        email: string;
         id: number;
       };
     }>,

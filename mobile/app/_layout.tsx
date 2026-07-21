@@ -31,6 +31,22 @@ export default function RootLayout() {
             name="signup"
             options={{ title: "Sign Up", headerBackTitle: "Back" }}
           />
+          <Stack.Screen
+            name="room/[id]"
+            options={{ title: "Room Detail", headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="about"
+            options={{ title: "About Us", headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="help"
+            options={{ title: "Help Center", headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="profile"
+            options={{ title: "Profile", headerBackTitle: "Back" }}
+          />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Auth_service_1 = __importDefault(require("./Auth.service"));
 const User_service_1 = __importDefault(require("../User.service"));
+const jwt_1 = require("../../util/jwt");
+const errors_1 = require("../../util/error/errors");
 class AuthController {
     async SingUp(req, res) {
         try {
@@ -18,8 +20,16 @@ class AuthController {
     async Login(req, res) {
         try {
             const userId = await Auth_service_1.default.checkPasswordIsCorrect(req.body);
-            req.session.userId = userId;
-            res.status(200).json({ message: "Login success" });
+            const user = await User_service_1.default.getUser(userId);
+            if (user.banned) {
+                throw new errors_1.AuthorizeError("Account has been banned");
+            }
+            const token = (0, jwt_1.signToken)({ userId, role: user.role || "user", banned: user.banned });
+            res.status(200).json({
+                message: "Login success",
+                token,
+                data: { _id: String(user._id), name: user.name, email: user.email, role: user.role || "user" },
+            });
         }
         catch (error) {
             throw error;
@@ -27,35 +37,23 @@ class AuthController {
     }
     async getProfile(req, res) {
         try {
-            if (!req.session.userId) {
-                res.status(401).json({
-                    message: "Not logged in",
-                });
+            if (!req.userId) {
+                res.status(401).json({ message: "Not logged in" });
                 return;
             }
-            const { name, role, id, _id } = await User_service_1.default.getUser(req.session.userId);
+            const { name, role, id, _id, email } = await User_service_1.default.getUser(req.userId);
             res.json({
                 message: "Logged In",
-                data: { _id: String(_id), name, role: role, id },
+                data: { _id: String(_id), name, role: role, id, email },
             });
         }
         catch (error) {
             throw error;
         }
     }
-    async Logout(req, res) {
+    async Logout(_req, res) {
         try {
-            await new Promise((resolve, reject) => {
-                req.session.destroy((err) => {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve();
-                });
-            });
-            res.json({
-                message: "Logged out",
-            });
+            res.json({ message: "Logged out" });
         }
         catch (error) {
             throw error;

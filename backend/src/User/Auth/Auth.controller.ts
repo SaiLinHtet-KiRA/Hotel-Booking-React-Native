@@ -5,6 +5,8 @@ import LoginType from "./interface/Schema";
 import AuthService from "./Auth.service";
 import UserService from "../User.service";
 import { User } from "../User.model";
+import { signToken } from "../../util/jwt";
+import { AuthorizeError } from "../../util/error/errors";
 
 class AuthController implements AuthControllerType {
   async SingUp(
@@ -20,14 +22,23 @@ class AuthController implements AuthControllerType {
   }
   async Login(
     req: Request<null, null, LoginType, null>,
-    res: Response<{ message: string }>,
+    res: Response<{ message: string; token?: string; data?: { _id: string; name: string; email: string; role: string } }>,
   ): Promise<void> {
     try {
       const userId = await AuthService.checkPasswordIsCorrect(req.body);
+      const user = await UserService.getUser(userId);
 
-      req.session.userId = userId;
+      if (user.banned) {
+        throw new AuthorizeError("Account has been banned");
+      }
 
-      res.status(200).json({ message: "Login success" });
+      const token = signToken({ userId, role: user.role || "user", banned: user.banned });
+
+      res.status(200).json({
+        message: "Login success",
+        token,
+        data: { _id: String(user._id), name: user.name, email: user.email, role: user.role || "user" },
+      });
     } catch (error) {
       throw error;
     }
@@ -40,43 +51,33 @@ class AuthController implements AuthControllerType {
         _id: string;
         name: string;
         role: string;
+        email: string;
         id: number;
       };
     }>,
   ): Promise<void> {
     try {
-      if (!req.session.userId) {
-        res.status(401).json({
-          message: "Not logged in",
-        });
+      if (!req.userId) {
+        res.status(401).json({ message: "Not logged in" });
         return;
       }
-      const { name, role, id, _id } = await UserService.getUser(
-        req.session.userId,
-      );
+
+      const { name, role, id, _id, email } = await UserService.getUser(req.userId);
 
       res.json({
         message: "Logged In",
-        data: { _id: String(_id), name, role: role!, id },
+        data: { _id: String(_id), name, role: role!, id, email },
       });
     } catch (error) {
       throw error;
     }
   }
   async Logout(
-    req: Request<null, null, null, null>,
+    _req: Request<null, null, null, null>,
     res: Response<{ message: string }>,
   ): Promise<void> {
     try {
-      await new Promise<void>((resolve, reject) => {
-        req.session.destroy((err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-      res.json({
-        message: "Logged out",
-      });
+      res.json({ message: "Logged out" });
     } catch (error) {
       throw error;
     }

@@ -4,7 +4,6 @@ const blob_1 = require("@vercel/blob");
 const SaveImage = async (req, _res, next) => {
     try {
         const files = req.files;
-        console.log("files", files);
         if (!files)
             return next();
         if (files?.length) {

@@ -3,6 +3,7 @@ import RoomRepo from "./Room.repo";
 import RoomServiceType from "./interface/Room.service.type";
 import { validateZod } from "../util/validate";
 import { PaginationQuery } from "./interface/Room.query.type";
+import { UpdateQuery } from "mongoose";
 
 class RoomService implements RoomServiceType {
   async getRooms(
@@ -43,15 +44,11 @@ class RoomService implements RoomServiceType {
       throw error;
     }
   }
-  async updateRoom(id: string, data: Partial<Room>): Promise<RoomDocument> {
+  async updateRoom(id: string, data: UpdateQuery<Room>): Promise<RoomDocument> {
     try {
-      try {
-        const RoomData = validateZod(RoomSchema, data);
+      const RoomData = validateZod(RoomSchema.partial(), data);
 
-        return await RoomRepo.update(id, RoomData);
-      } catch (error) {
-        throw error;
-      }
+      return await RoomRepo.update(id, RoomData);
     } catch (error) {
       throw error;
     }

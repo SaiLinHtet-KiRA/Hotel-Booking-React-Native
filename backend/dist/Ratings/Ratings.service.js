@@ -47,13 +47,8 @@ class RatingsService {
     }
     async updateRatings(id, data) {
         try {
-            try {
-                const RatingsData = (0, validate_1.validateZod)(Ratings_model_1.RatingsSchema, data);
-                return await Ratings_repo_1.default.update(id, RatingsData);
-            }
-            catch (error) {
-                throw error;
-            }
+            const RatingsData = (0, validate_1.validateZod)(Ratings_model_1.RatingsSchema, data);
+            return await Ratings_repo_1.default.update(id, RatingsData);
         }
         catch (error) {
             throw error;

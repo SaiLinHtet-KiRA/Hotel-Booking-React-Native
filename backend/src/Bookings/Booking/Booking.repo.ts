@@ -1,13 +1,33 @@
+import { UpdateQuery } from "mongoose";
 import { NotFoundError } from "../../util/error/errors";
 import BookingModel, { BookingDocument, Booking } from "./Booking.model";
+import { PaginationQuery } from "./interface/Booking.query.type";
 import BookingRepoType from "./interface/Booking.repo.type";
 
 class BookingRepo implements BookingRepoType {
-  async get(): Promise<BookingDocument[]> {
+  async get({
+    limit,
+    page,
+    status,
+  }: PaginationQuery): Promise<BookingDocument[]> {
     try {
-      const Bookings = await BookingModel.find();
+      const Bookings = await BookingModel.find(
+        status ? { status: status } : {},
+        {},
+        page && limit ? { skip: page * limit, limit } : {},
+      ).sort({ createdAt: -1 });
       if (Bookings) return Bookings;
       throw new Error(`Something was wrong in BookingRepo.get`);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCount({ status }: PaginationQuery): Promise<number> {
+    try {
+      return await BookingModel.countDocuments(
+        status ? { status: status } : {},
+        {},
+      );
     } catch (error) {
       throw error;
     }
@@ -29,7 +49,10 @@ class BookingRepo implements BookingRepoType {
       throw error;
     }
   }
-  async update(id: string, data: Booking): Promise<BookingDocument> {
+  async update(
+    id: string,
+    data: UpdateQuery<Booking>,
+  ): Promise<BookingDocument> {
     try {
       const Booking = await BookingModel.findByIdAndUpdate(id, data, {
         new: true,

@@ -5,6 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Booking_service_1 = __importDefault(require("./Booking.service"));
 class BookingController {
+    async getBookings(req, res) {
+        try {
+            const query = req.query;
+            const data = await Booking_service_1.default.getBookings(query);
+            res
+                .status(200)
+                .json({ message: "Booking retrieved successfully", ...data });
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async getBooking(req, res) {
         try {
             const { id } = req.params;

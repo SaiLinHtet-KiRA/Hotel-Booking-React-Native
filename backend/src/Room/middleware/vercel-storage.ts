@@ -9,8 +9,6 @@ const SaveImage = async (
   try {
     const files = req.files as Express.Multer.File[] | undefined;
 
-    console.log("files", files);
-
     if (!files) return next();
 
     if (files?.length) {

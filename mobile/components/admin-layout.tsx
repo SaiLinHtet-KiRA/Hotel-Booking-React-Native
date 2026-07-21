@@ -4,30 +4,19 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import type { ComponentType } from "react";
-import type { SvgProps } from "react-native-svg";
 import {
   RoomIcon,
   ChartIcon,
-  InfoIcon,
-  LogoutIcon,
   UserGroupIcon,
-  HelpCenterIcon,
 } from "@/components/svg/AdminIcons";
-import { UserIcon } from "./svg";
+import { useAuth } from "@/hooks/use-auth";
+import { TabCategory, sharedTabs } from "@/constants/tabs";
+import { useLogoutMutation } from "@/redux/api/auth";
+import { removeToken } from "@/util/token";
+import { clearUser } from "@/redux/features/user";
+import { useDispatch } from "react-redux";
 
-type AdminTab = {
-  label: string;
-  icon: ComponentType<SvgProps & { size?: number }>;
-  path: string;
-};
-
-type AdminCategory = {
-  category: string;
-  tabs: AdminTab[];
-};
-
-const adminTabs: AdminCategory[] = [
+const adminTabs: TabCategory[] = [
   {
     category: "Management",
     tabs: [
@@ -36,26 +25,29 @@ const adminTabs: AdminCategory[] = [
       { label: "Users", icon: UserGroupIcon, path: "/admin/users" },
     ],
   },
-  {
-    category: "Settings",
-    tabs: [{ label: "Profile", icon: UserIcon, path: "/admin/config" }],
-  },
-  {
-    category: "Help and info",
-    tabs: [
-      { label: "About us", icon: InfoIcon, path: "/admin/about" },
-      { label: "Help Center", icon: HelpCenterIcon, path: "/admin/help" },
-    ],
-  },
-  {
-    category: "Manage your account",
-    tabs: [{ label: "Sign out", icon: LogoutIcon, path: "" }],
-  },
 ];
 
 export default function AdminLayout() {
   const scheme = useColorScheme();
   const colors = Colors[scheme ?? "light"];
+  useAuth();
+  const [logout] = useLogoutMutation();
+  const dispatch = useDispatch();
+
+  const handlePress = async (tab: (typeof sharedTabs)[0]["tabs"][0]) => {
+    if (tab.label === "Sign out") {
+      try {
+        await logout().unwrap();
+      } catch (error) {
+        console.log(error);
+      }
+      await removeToken();
+      dispatch(clearUser());
+      router.replace("/login");
+      return;
+    }
+    if (tab.path) router.push(tab.path as never);
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -79,9 +71,7 @@ export default function AdminLayout() {
                     backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
                   },
                 ]}
-                onPress={() => {
-                  if (tab.path) router.push(tab.path);
-                }}
+                onPress={() => handlePress(tab)}
               >
                 <View style={styles.tabLeft}>
                   <View
@@ -119,7 +109,59 @@ export default function AdminLayout() {
             )}
           </View>
         ))}
+        {sharedTabs.map((section) => (
+          <View key={section.category} style={styles.section}>
+            <ThemedText style={styles.categoryLabel}>
+              {section.category}
+            </ThemedText>
 
+            {section.tabs.map((tab) => (
+              <Pressable
+                key={tab.label}
+                style={[
+                  styles.tabRow,
+                  {
+                    backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
+                  },
+                ]}
+                onPress={() => handlePress(tab)}
+              >
+                <View style={styles.tabLeft}>
+                  <View
+                    style={[
+                      styles.iconBox,
+                      {
+                        backgroundColor:
+                          scheme === "dark" ? "#2C2C2E" : "#E8F0FE",
+                      },
+                    ]}
+                  >
+                    <tab.icon size={22} color={colors.tint} />
+                  </View>
+                  <ThemedText type="defaultSemiBold">{tab.label}</ThemedText>
+                </View>
+                <ThemedText style={{ color: colors.icon, fontSize: 18 }}>
+                  ›
+                </ThemedText>
+              </Pressable>
+            ))}
+
+            {section.tabs.length === 0 && (
+              <ThemedView
+                style={[
+                  styles.empty,
+                  {
+                    backgroundColor: scheme === "dark" ? "#1C1C1E" : "#F2F2F7",
+                  },
+                ]}
+              >
+                <ThemedText style={{ color: colors.icon }}>
+                  No items yet
+                </ThemedText>
+              </ThemedView>
+            )}
+          </View>
+        ))}
         <View style={{ height: 40 }} />
       </ScrollView>
     </ThemedView>

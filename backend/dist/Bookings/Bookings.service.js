@@ -36,13 +36,7 @@ class BookingsService {
     }
     async updateBookings(id, data) {
         try {
-            try {
-                const BookingsData = (0, validate_1.validateZod)(Bookings_model_1.BookingsSchema, data);
-                return await Bookings_repo_1.default.update(id, BookingsData);
-            }
-            catch (error) {
-                throw error;
-            }
+            return await Bookings_repo_1.default.update(id, data);
         }
         catch (error) {
             throw error;

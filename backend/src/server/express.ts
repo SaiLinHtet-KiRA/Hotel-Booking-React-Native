@@ -1,10 +1,9 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import Routes from "../router/index.route";
 
 import { HandleErrorWithLogger } from "../util/error/handler";
 import cors from "cors";
-import { SECRET } from "../config/config";
-import session from "express-session";
+import { verifyToken } from "../util/jwt";
 
 export default class ExpressServer {
   public app: Express;
@@ -18,20 +17,24 @@ export default class ExpressServer {
       }),
     );
 
-    this.app.use(
-      session({
-        secret: SECRET,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-          httpOnly: true,
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        },
-      }),
-    );
     this.app.use(express.json());
+
+    this.app.use((req: Request, _res: Response, next: NextFunction) => {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        try {
+          const token = authHeader.split(" ")[1];
+          const payload = verifyToken(token);
+          req.userId = payload.userId;
+          req.userRole = payload.role;
+          req.userBanned = payload.banned;
+        } catch {
+          // token invalid, continue without auth
+        }
+      }
+      next();
+    });
+
     this.app.use(Routes);
 
     this.app.use(HandleErrorWithLogger);

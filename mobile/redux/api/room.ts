@@ -22,16 +22,17 @@ export const roomApiSlice = apiSlice.injectEndpoints({
       query: (id) => ({ url: `/room/${id}`, method: "DELETE" }),
       invalidatesTags: ["Room"],
     }),
-    updateRoom: builder.mutation<Response<Room>, { id: string; body: FormData }>(
-      {
-        query: ({ id, body }) => ({
-          url: `/room/${id}`,
-          method: "PATCH",
-          body,
-        }),
-        invalidatesTags: ["Room"],
-      },
-    ),
+    updateRoom: builder.mutation<
+      Response<Room>,
+      { id: string; body: FormData }
+    >({
+      query: ({ id, body }) => ({
+        url: `/room/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Room"],
+    }),
     createRoom: builder.mutation<Response<Room>, FormData>({
       query: (body) => ({ url: "/room", method: "POST", body }),
       invalidatesTags: ["Room"],
@@ -41,7 +42,6 @@ export const roomApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetRoomsQuery,
-  useLazyGetRoomsQuery,
   useGetRoomQuery,
   useDeleteRoomMutation,
   useCreateRoomMutation,

@@ -10,6 +10,7 @@ export default interface User {
   name: string;
   email: string;
   role: "admin" | "user";
+  banned: boolean;
   bookings: string | UserBookings;
 }
 
@@ -18,4 +19,5 @@ export type UserDTO = {
   email?: string;
   password?: string;
   role?: "admin" | "user";
+  banned?: boolean;
 };

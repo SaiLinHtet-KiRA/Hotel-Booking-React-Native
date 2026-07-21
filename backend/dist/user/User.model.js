@@ -54,6 +54,7 @@ exports.UserSchema = zod_1.z.object({
         message: "Invalid Role",
     })
         .optional(),
+    banned: zod_1.z.boolean().default(false).optional(),
 });
 const DSchema = new mongoose_1.Schema({
     id: {
@@ -80,6 +81,7 @@ const DSchema = new mongoose_1.Schema({
         required: [true, "Role field is missing"],
         default: "user",
     },
+    banned: { type: Boolean, default: false },
     bookings: { type: mongoose_1.Schema.Types.ObjectId },
 }, { versionKey: false, timestamps: true });
 DSchema.pre("save", async function () {

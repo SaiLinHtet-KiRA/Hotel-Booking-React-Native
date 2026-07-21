@@ -7,8 +7,16 @@ const initialState = {} as User;
 const topupSlice = createSlice({
   name: "AccountInfo",
   initialState,
-  reducers: {},
+  reducers: {
+    clearUser: () => initialState,
+  },
   extraReducers(builder) {
+    builder.addMatcher(
+      authApiSlice.endpoints.Login.matchFulfilled,
+      (_, action) => {
+        return action.payload.data as User;
+      },
+    );
     builder.addMatcher(
       authApiSlice.endpoints.getProfile.matchFulfilled,
       (_, action) => {
@@ -18,6 +26,6 @@ const topupSlice = createSlice({
   },
 });
 
-// export const {} = topupSlice.actions;
+export const { clearUser } = topupSlice.actions;
 
 export default topupSlice.reducer;

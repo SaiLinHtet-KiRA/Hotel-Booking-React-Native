@@ -45,13 +45,8 @@ class RoomService {
     }
     async updateRoom(id, data) {
         try {
-            try {
-                const RoomData = (0, validate_1.validateZod)(Room_model_1.RoomSchema, data);
-                return await Room_repo_1.default.update(id, RoomData);
-            }
-            catch (error) {
-                throw error;
-            }
+            const RoomData = (0, validate_1.validateZod)(Room_model_1.RoomSchema.partial(), data);
+            return await Room_repo_1.default.update(id, RoomData);
         }
         catch (error) {
             throw error;

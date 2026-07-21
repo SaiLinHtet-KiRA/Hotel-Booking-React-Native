@@ -37,13 +37,7 @@ class BookingsService implements BookingsServiceType {
     data: UpdateQuery<Bookings>,
   ): Promise<BookingsDocument> {
     try {
-      try {
-        const BookingsData = validateZod(BookingsSchema, data);
-
-        return await BookingsRepo.update(id, BookingsData);
-      } catch (error) {
-        throw error;
-      }
+      return await BookingsRepo.update(id, data);
     } catch (error) {
       throw error;
     }

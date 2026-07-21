@@ -12,20 +12,20 @@ class AuthService implements AuthServiceType {
 
       const existingUser = await UserService.getUsers({ email: email });
 
-      if (!existingUser.length) {
+      if (!existingUser.data.length) {
         throw new AuthorizeError("Invalid email or password");
       }
 
       const isMatch = await comparePassword(
         password,
-        existingUser[0].password!,
+        existingUser.data[0].password!,
       );
 
       if (!isMatch) {
         throw new AuthorizeError("Invalid email or password");
       }
 
-      return existingUser[0]._id.toString();
+      return existingUser.data[0]._id.toString();
     } catch (error) {
       throw error;
     }

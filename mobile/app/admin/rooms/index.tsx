@@ -1,51 +1,74 @@
-import { useState, useEffect, useCallback } from "react";
-import { StyleSheet, Pressable, FlatList, View, ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Pressable,
+  FlatList,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useLazyGetRoomsQuery } from "@/redux/api/room";
+import { useGetRoomsQuery } from "@/redux/api/room";
 import FilterDropdown from "@/components/filter-dropdown";
 import RoomCard from "@/components/room-card";
 import type Room from "@/interface/Room";
 import type { RoomType, RoomStatus } from "@/interface/Room";
 
-const ROOM_TYPES: RoomType[] = ["single bed", "double bed", "family", "deluxe", "suite"];
+const ROOM_TYPES: RoomType[] = [
+  "single bed",
+  "double bed",
+  "family",
+  "deluxe",
+  "suite",
+];
 const ROOM_STATUSES: RoomStatus[] = ["available", "busy", "maintenance"];
 const LIMIT = 10;
 
 export default function RoomsScreen() {
   const scheme = useColorScheme();
   const colors = Colors[scheme ?? "light"];
-  const [fetchRooms, { isFetching }] = useLazyGetRoomsQuery();
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [page, setPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
+  const { data, isFetching } = useGetRoomsQuery(
+    { page, limit: LIMIT },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const [typeFilter, setTypeFilter] = useState<RoomType | null>(null);
   const [statusFilter, setStatusFilter] = useState<RoomStatus | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
 
-  const openType = () => { setStatusOpen(false); setTypeOpen(true); };
-  const openStatus = () => { setTypeOpen(false); setStatusOpen(true); };
+  const openType = () => {
+    setStatusOpen(false);
+    setTypeOpen(true);
+  };
+  const openStatus = () => {
+    setTypeOpen(false);
+    setStatusOpen(true);
+  };
 
-  const loadMore = useCallback(async (pageNum: number) => {
-    const res = await fetchRooms({ page: pageNum, limit: LIMIT }).unwrap();
-    const newRooms = res.data;
-    setRooms((prev) => (pageNum === 0 ? newRooms : [...prev, ...newRooms]));
-    setHasMore(newRooms.length === LIMIT);
-  }, [fetchRooms]);
+  useEffect(() => {
+    if (!data) return;
+    const newRooms = data.data;
+    setRooms((prev) => (page === 0 ? newRooms : [...prev, ...newRooms]));
+    setTotalCount(data.size);
+  }, [data]);
 
-  useEffect(() => { loadMore(0); }, []);
+  useEffect(() => {
+    setHasMore(rooms.length < totalCount);
+  }, [rooms, totalCount]);
 
   const handleEndReached = () => {
     if (!isFetching && hasMore) {
-      const next = page + 1;
-      setPage(next);
-      loadMore(next);
+      setPage((prev) => prev + 1);
     }
   };
 
@@ -72,7 +95,10 @@ export default function RoomsScreen() {
             selected={typeFilter}
             visible={typeOpen}
             onOpen={openType}
-            onSelect={(v) => { setTypeFilter(v); setTypeOpen(false); }}
+            onSelect={(v) => {
+              setTypeFilter(v);
+              setTypeOpen(false);
+            }}
             onClose={() => setTypeOpen(false)}
           />
           <FilterDropdown
@@ -81,7 +107,10 @@ export default function RoomsScreen() {
             selected={statusFilter}
             visible={statusOpen}
             onOpen={openStatus}
-            onSelect={(v) => { setStatusFilter(v); setStatusOpen(false); }}
+            onSelect={(v) => {
+              setStatusFilter(v);
+              setStatusOpen(false);
+            }}
             onClose={() => setStatusOpen(false)}
           />
         </View>

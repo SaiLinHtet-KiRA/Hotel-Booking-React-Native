@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { User, UserDocument } from "../User.model";
 import { PaginationQuery } from "./User.query.type";
 
-export type GetUserRequest = Request<{ id: string }, null, null, null>;
-export type GetUsersRequest = Request<null, null, null, PaginationQuery>;
-export type UpdateUserRequest = Request<{ id: string }, null, User, null>;
-export type CreateUserRequest = Request<null, null, User, null>;
-export type DeleteUserRequest = Request<{ id: string }, null, null, null>;
+export type GetUserRequest = Request<{ id: string }>;
+export type GetUsersRequest = Request;
+export type UpdateUserRequest = Request<{ id: string }, unknown, User>;
+export type CreateUserRequest = Request<Record<string, never>, unknown, User>;
+export type DeleteUserRequest = Request<{ id: string }>;
 
 export default interface UserControllerType {
   getUser(

@@ -171,21 +171,21 @@ describe("User Service", () => {
 
     describe("List Users", () => {
       it("WITH SUCCESS", async () => {
-        const users = await UserService.getUsers({});
+        const { data: users } = await UserService.getUsers({});
 
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITH PAGINATION", async () => {
-        const users = await UserService.getUsers({ page: 0, limit: 10 });
+        const { data: users } = await UserService.getUsers({ page: 0, limit: 10 });
 
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITH ROLE FILTER", async () => {
-        const users = await UserService.getUsers({ role: "user" });
+        const { data: users } = await UserService.getUsers({ role: "user" });
 
         expect(Array.isArray(users)).toBe(true);
         expect(users.length).toBeGreaterThanOrEqual(1);

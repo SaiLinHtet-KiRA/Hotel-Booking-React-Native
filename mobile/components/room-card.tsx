@@ -9,14 +9,14 @@ import { HashIcon, TagIcon, DollarIcon } from "@/components/svg/FormIcons";
 import StatusBadge from "@/components/status-badge";
 import type Room from "@/interface/Room";
 
-type Props = { room: Room };
+type Props = { room: Room; onPress?: () => void };
 
-export default function RoomCard({ room }: Props) {
+export default function RoomCard({ room, onPress }: Props) {
   const scheme = useColorScheme();
   const colors = Colors[scheme ?? "light"];
 
   return (
-    <Pressable onPress={() => router.push(`/admin/rooms/${room._id}`)}>
+    <Pressable onPress={onPress ?? (() => router.push(`/admin/rooms/${room._id}`))}>
       <ThemedView
         style={[
           styles.card,

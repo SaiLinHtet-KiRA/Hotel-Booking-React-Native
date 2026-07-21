@@ -16,6 +16,7 @@ export const UserSchema = z.object({
       message: "Invalid Role",
     })
     .optional(),
+  banned: z.boolean().default(false).optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -50,6 +51,7 @@ const DSchema = new Schema<UserDocument>(
       required: [true, "Role field is missing"],
       default: "user",
     },
+    banned: { type: Boolean, default: false },
     bookings: { type: Schema.Types.ObjectId },
   },
   { versionKey: false, timestamps: true },

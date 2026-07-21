@@ -13,14 +13,14 @@ class AuthService {
         try {
             const { email, password } = (0, validate_1.validateZod)(Schema_1.LoginSchema, data);
             const existingUser = await User_service_1.default.getUsers({ email: email });
-            if (!existingUser.length) {
+            if (!existingUser.data.length) {
                 throw new errors_1.AuthorizeError("Invalid email or password");
             }
-            const isMatch = await (0, comparePassword_1.comparePassword)(password, existingUser[0].password);
+            const isMatch = await (0, comparePassword_1.comparePassword)(password, existingUser.data[0].password);
             if (!isMatch) {
                 throw new errors_1.AuthorizeError("Invalid email or password");
             }
-            return existingUser[0]._id.toString();
+            return existingUser.data[0]._id.toString();
         }
         catch (error) {
             throw error;

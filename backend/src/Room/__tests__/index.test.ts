@@ -191,35 +191,35 @@ describe("Room Booking Service", () => {
 
     describe("List Rooms", () => {
       it("WITH SUCCESS", async () => {
-        const rooms = await RoomService.getRooms({});
+        const { data: rooms } = await RoomService.getRooms({});
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITH PAGINATION", async () => {
-        const rooms = await RoomService.getRooms({ page: 0, limit: 10 });
+        const { data: rooms } = await RoomService.getRooms({ page: 0, limit: 10 });
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITH TYPE FILTER", async () => {
-        const rooms = await RoomService.getRooms({ type: "single bed" });
+        const { data: rooms } = await RoomService.getRooms({ type: "single bed" });
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITHOUT FILTERS", async () => {
-        const rooms = await RoomService.getRooms({});
+        const { data: rooms } = await RoomService.getRooms({});
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);
       });
 
       it("WITH STATUS FILTER", async () => {
-        const rooms = await RoomService.getRooms({ status: "available" });
+        const { data: rooms } = await RoomService.getRooms({ status: "available" });
 
         expect(Array.isArray(rooms)).toBe(true);
         expect(rooms.length).toBeGreaterThanOrEqual(1);

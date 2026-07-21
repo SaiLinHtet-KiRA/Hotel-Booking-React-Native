@@ -1,13 +1,18 @@
-import UserModel from "../User/User.model";
+import { UpdateQuery } from "mongoose";
 import { NotFoundError } from "../util/error/errors";
 import BookingModel from "./Booking/Booking.model";
+import RoomModel from "../Room/Room.model";
 import BookingsModel, { Bookings, BookingsDocument } from "./Bookings.model";
 import BookingsRepoType from "./interface/Bookings.repo.type";
 
 class BookingsRepo implements BookingsRepoType {
   async get(): Promise<BookingsDocument[]> {
     try {
-      const Bookings = await BookingsModel.find();
+      const Bookings = await BookingsModel.find().populate({
+        path: "bookings",
+        model: BookingModel,
+        populate: { path: "room", model: RoomModel },
+      });
       if (Bookings) return Bookings;
       throw new Error(`Something was wrong in BookingsRepo.get`);
     } catch (error) {
@@ -17,9 +22,10 @@ class BookingsRepo implements BookingsRepoType {
   async getByID(id: string): Promise<BookingsDocument> {
     try {
       const Bookings = await BookingsModel.findById(id).populate({
-        path: "Bookings",
+        path: "bookings",
         model: BookingModel,
-        populate: { path: "user", model: UserModel },
+        options: { sort: { createdAt: -1 } },
+        populate: { path: "room", model: RoomModel },
       });
       if (Bookings) return Bookings;
       throw new NotFoundError(`${id} was not found in Rate Database!!!`);
@@ -35,7 +41,10 @@ class BookingsRepo implements BookingsRepoType {
       throw error;
     }
   }
-  async update(id: string, data: Bookings): Promise<BookingsDocument> {
+  async update(
+    id: string,
+    data: UpdateQuery<Bookings>,
+  ): Promise<BookingsDocument> {
     try {
       const Bookings = await BookingsModel.findByIdAndUpdate(id, data, {
         new: true,

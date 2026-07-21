@@ -8,7 +8,7 @@ import { PaginationQuery } from "./interface/Room.query.type";
 
 class RoomController implements RoomControllerType {
   async getRoom(
-    req: Request<{ id: string }, null, null, null>,
+    req: Request<{ id: string }>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
@@ -24,7 +24,7 @@ class RoomController implements RoomControllerType {
   }
 
   async getRooms(
-    req: Request<null, null, null, PaginationQuery>,
+    req: Request<Record<string, never>, unknown, unknown, PaginationQuery>,
     res: Response<{ message: string; data: RoomDocument[]; size: number }>,
   ): Promise<void> {
     try {
@@ -37,7 +37,7 @@ class RoomController implements RoomControllerType {
   }
 
   async updateRoom(
-    req: Request<{ id: string }, {}, RoomCreateBody, {}>,
+    req: Request<{ id: string }, unknown, RoomCreateBody>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
@@ -53,7 +53,7 @@ class RoomController implements RoomControllerType {
   }
 
   async createRoom(
-    req: Request<{}, {}, RoomCreateBody, {}>,
+    req: Request<Record<string, never>, unknown, RoomCreateBody>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {
@@ -68,7 +68,7 @@ class RoomController implements RoomControllerType {
   }
 
   async deleteRoom(
-    req: Request<{ id: string }, null, null, null>,
+    req: Request<{ id: string }>,
     res: Response<{ message: string; data: RoomDocument }>,
   ): Promise<void> {
     try {

@@ -7,8 +7,7 @@ const express_1 = __importDefault(require("express"));
 const index_route_1 = __importDefault(require("../router/index.route"));
 const handler_1 = require("../util/error/handler");
 const cors_1 = __importDefault(require("cors"));
-const config_1 = require("../config/config");
-const express_session_1 = __importDefault(require("express-session"));
+const jwt_1 = require("../util/jwt");
 class ExpressServer {
     app;
     constructor() {
@@ -18,18 +17,23 @@ class ExpressServer {
             origin: process.env.FRONTEND_URL || "http://localhost:3000",
             credentials: true,
         }));
-        this.app.use((0, express_session_1.default)({
-            secret: config_1.SECRET,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                httpOnly: true,
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-            },
-        }));
         this.app.use(express_1.default.json());
+        this.app.use((req, _res, next) => {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith("Bearer ")) {
+                try {
+                    const token = authHeader.split(" ")[1];
+                    const payload = (0, jwt_1.verifyToken)(token);
+                    req.userId = payload.userId;
+                    req.userRole = payload.role;
+                    req.userBanned = payload.banned;
+                }
+                catch {
+                    // token invalid, continue without auth
+                }
+            }
+            next();
+        });
         this.app.use(index_route_1.default);
         this.app.use(handler_1.HandleErrorWithLogger);
     }

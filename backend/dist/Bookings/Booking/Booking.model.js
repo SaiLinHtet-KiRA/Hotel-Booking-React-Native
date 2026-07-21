@@ -65,6 +65,7 @@ const DSchema = new mongoose_1.Schema({
     bookings: { type: mongoose_1.Schema.Types.ObjectId, required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
+    price: { type: Number, default: 0, required: true },
     status: {
         type: String,
         enum: ["pending", "confirmed", "cancelled"],

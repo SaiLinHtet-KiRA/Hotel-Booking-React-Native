@@ -1,7 +1,5 @@
-import mongoose, { Schema, HydratedDocument, Types } from "mongoose";
+import mongoose, { Schema, HydratedDocument } from "mongoose";
 import { z } from "zod";
-import { RatingsDocument } from "../Ratings/Ratings.model";
-import RatingsService from "../Ratings/Ratings.service";
 
 export const RoomSchema = z.object({
   number: z.coerce
@@ -35,11 +33,7 @@ export const RoomSchema = z.object({
 
 export type Room = z.infer<typeof RoomSchema>;
 
-export type RoomDocument = HydratedDocument<
-  Room & {
-    ratings: RatingsDocument | Types.ObjectId;
-  }
->;
+export type RoomDocument = HydratedDocument<Room>;
 
 const DSchema = new Schema<RoomDocument>(
   {
@@ -56,20 +50,10 @@ const DSchema = new Schema<RoomDocument>(
       enum: ["available", "busy", "maintenance"],
       default: "available",
     },
-    ratings: {
-      type: Schema.ObjectId,
-    },
     photo: { type: [String], default: [] },
   },
   { versionKey: false, timestamps: true },
 );
-
-DSchema.pre("save", async function () {
-  if (this.isNew) {
-    const newRatings = await RatingsService.createRatings({ ratings: [] });
-    this.ratings = newRatings._id;
-  }
-});
 
 const RoomModel = mongoose.connection.useDb("Room").model("Room", DSchema);
 

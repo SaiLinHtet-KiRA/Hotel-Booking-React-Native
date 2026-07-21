@@ -34,6 +34,8 @@ export default function AdminLayout() {
       <Stack.Screen name="config" options={{ title: "Config" }} />
       <Stack.Screen name="about" options={{ title: "About Us" }} />
       <Stack.Screen name="help" options={{ title: "Help Center" }} />
+      <Stack.Screen name="profile/index" options={{ title: "Profile" }} />
+      <Stack.Screen name="create-user" options={{ title: "Create Admin" }} />
     </Stack>
   );
 }

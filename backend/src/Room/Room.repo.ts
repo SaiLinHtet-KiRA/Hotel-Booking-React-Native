@@ -1,3 +1,4 @@
+import { UpdateQuery } from "mongoose";
 import { NotFoundError } from "../util/error/errors";
 import RoomModel, { RoomDocument, Room } from "./Room.model";
 import { PaginationQuery } from "./interface/Room.query.type";
@@ -67,7 +68,7 @@ class RoomRepo implements RoomRepoType {
       throw error;
     }
   }
-  async update(id: string, data: Room): Promise<RoomDocument> {
+  async update(id: string, data: UpdateQuery<Room>): Promise<RoomDocument> {
     try {
       const Room = await RoomModel.findByIdAndUpdate(id, data, {
         returnDocument: "after",
